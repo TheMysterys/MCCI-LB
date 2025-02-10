@@ -1,7 +1,8 @@
 name: Update Leaderboards
 on:
     schedule:
-        - cron: '0 0 * * *'
+        - cron: "0 0 * * *"
+    workflow_dispatch:
 
 jobs:
     update_leaderboards:
@@ -13,19 +14,18 @@ jobs:
             - name: Setup node
               uses: actions/setup-node@v4
               with:
-                  node-version: 'latest'
-            
+                  node-version: "latest"
+
             - name: Install dependencies
               run: npm install
 
             - name: Update leaderboards
               run: npm run
               env:
-                MONGO_URI: ${{ secrets.MONGO_URI }}
-                API_KEY: ${{ secrets.API_KEY }}
-                OVERALL: ${{ secrets.OVERALL }}
-                SKILL: ${{ secrets.SKILL }}
-                STYLE: ${{ secrets.STYLE }}
-                FISHING: ${{ secrets.FISHING }}
-                REPUTATION: ${{ secrets.REPUTATION }}
-        
+                  MONGO_URI: ${{ secrets.MONGO_URI }}
+                  API_KEY: ${{ secrets.API_KEY }}
+                  OVERALL: ${{ secrets.OVERALL }}
+                  SKILL: ${{ secrets.SKILL }}
+                  STYLE: ${{ secrets.STYLE }}
+                  FISHING: ${{ secrets.FISHING }}
+                  REPUTATION: ${{ secrets.REPUTATION }}
