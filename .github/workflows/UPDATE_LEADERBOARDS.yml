@@ -1,0 +1,31 @@
+name: Update Leaderboards
+on:
+    schedule:
+        - cron: '0 0 * * *'
+
+jobs:
+    update_leaderboards:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout
+
+            - name: Setup node
+              uses: actions/setup-node
+              with:
+                  node-version: 'latest'
+            
+            - name: Install dependencies
+              run: npm install
+
+            - name: Update leaderboards
+              run: npm run
+              env:
+                MONGO_URI: ${{ secrets.MONGO_URI }}
+                API_KEY: ${{ secrets.API_KEY }}
+                OVERALL: ${{ secrets.OVERALL }}
+                SKILL: ${{ secrets.SKILL }}
+                STYLE: ${{ secrets.STYLE }}
+                FISHING: ${{ secrets.FISHING }}
+                REPUTATION: ${{ secrets.REPUTATION }}
+        

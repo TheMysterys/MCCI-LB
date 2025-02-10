@@ -1,0 +1,14 @@
+{
+  "name": "trophy-hunters-lb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "run": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "mongodb": "^6.13.0"
+  }
+}
