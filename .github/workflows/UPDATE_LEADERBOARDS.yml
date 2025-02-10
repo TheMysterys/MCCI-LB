@@ -8,10 +8,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-              uses: actions/checkout
+              uses: actions/checkout@v4
 
             - name: Setup node
-              uses: actions/setup-node
+              uses: actions/setup-node@v4
               with:
                   node-version: 'latest'
             
