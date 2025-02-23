@@ -116,11 +116,13 @@ async function updateLeaderboard(db, leaderboard_key) {
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
 						entry.player.username
-					} ${getCrown(entry.player.levels.crownLevel.evolution)} - ${
-						entry.value
-					} ${
+					} ${getCrown(
+						entry.player.levels.crownLevel.evolution
+					)} - ${entry.value.toLocaleString()} ${
 						entry.change
-							? `(${entry.change > 0 ? "+" : ""}${entry.change})`
+							? `(${
+									entry.change > 0 ? "+" : ""
+							  }${entry.change.toLocaleString()})`
 							: ""
 					}`;
 				} else if (leaderboard_key === "fishing") {
@@ -134,9 +136,11 @@ async function updateLeaderboard(db, leaderboard_key) {
 						entry.player.username
 					} ${getFishing(
 						entry.player.levels.fishingLevel.evolution
-					)} - ${entry.value} ${
+					)} - ${entry.value.toLocaleString()} ${
 						entry.change
-							? `(${entry.change > 0 ? "+" : ""}${entry.change})`
+							? `(${
+									entry.change > 0 ? "+" : ""
+							  }${entry.change.toLocaleString()})`
 							: ""
 					}`;
 				} else {
@@ -148,9 +152,11 @@ async function updateLeaderboard(db, leaderboard_key) {
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
 						entry.player.username
-					} - ${entry.value} ${
+					} - ${entry.value.toLocaleString()} ${
 						entry.change
-							? `(${entry.change > 0 ? "+" : ""}${entry.change})`
+							? `(${
+									entry.change > 0 ? "+" : ""
+							  }${entry.change.toLocaleString()})`
 							: ""
 					}`;
 				}
