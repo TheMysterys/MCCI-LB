@@ -44,9 +44,11 @@ async function main() {
 	console.log("Connected to MongoDB");
 
 	for (const leaderboard_key in leaderboards) {
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 		console.log("Updating:", leaderboard_key);
 		await updateLeaderboard(db, leaderboard_key);
 	}
+	client.close();
 }
 
 async function updateLeaderboard(db, leaderboard_key) {
