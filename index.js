@@ -1,5 +1,6 @@
 const { MongoClient } = require("mongodb");
 const { getFishing, getCrown } = require("./emojis");
+const { log, LogType } = require("@themysterys/pretty-log");
 
 const client = new MongoClient(process.env.MONGO_URI);
 
@@ -8,6 +9,30 @@ const crowns = [
 	"<:1_:1313736388872507484>",
 	"<:5_:1313736416316096532>",
 ];
+
+const query = `query Leaderboard($key: String!) {
+  statistic(key: $key) {
+    leaderboard(amount: 20) {
+      player {
+        uuid
+        username
+        ranks
+        levels: crownLevel {
+          crownLevel: levelData {
+            evolution
+            level
+          }
+          fishingLevel: fishingLevelData {
+            evolution
+            level
+          }
+        }
+      }
+      rank
+      value
+    }
+  }
+}`;
 
 const leaderboards = {
 	overall: {
@@ -41,14 +66,15 @@ async function main() {
 	await client.connect();
 	const db = client.db("trophy-hunters");
 
-	console.log("Connected to MongoDB");
+	log("Connected to MongoDB", LogType.NETWORK);
 
 	for (const leaderboard_key in leaderboards) {
 		await new Promise((resolve) => setTimeout(resolve, 1000));
-		console.log("Updating:", leaderboard_key);
+		log(`Updating leaderboard: ${leaderboard_key}`);
 		await updateLeaderboard(db, leaderboard_key);
 	}
 	client.close();
+	log("Closed connection to MongoDB", LogType.NETWORK)
 }
 
 async function updateLeaderboard(db, leaderboard_key) {
@@ -61,21 +87,37 @@ async function updateLeaderboard(db, leaderboard_key) {
 	const pastLeaderboard = await collection.findOne({ type: leaderboard_key });
 
 	// get current leaderboard
-	const request = await fetch("https://api.islandstats.xyz/leaderboard", {
+	const request = await fetch("https://api.mccisland.net/graphql", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			"User-Agent": "Trophy Hunters Bot",
-			"API-Key": process.env.API_KEY,
+			"User-Agent": "Trophy Hunters Leaderboards",
+			"X-API-Key": process.env.API_KEY,
 		},
 		body: JSON.stringify({
-			stat: leaderboard.statistic,
+			query,
+			variables: { key: leaderboard.statistic },
 		}),
 	});
 
 	const data = await request.json();
+	let error = false; 
 
-	if (data.success === false) {
+	if (request.status !== 200) {
+		log(`MCC Island API returned status: ${request.status}`, LogType.ERROR);
+		console.error(data)
+		error = true;
+	}
+
+	if (data.errors) {
+		log(`${data.errors.length} Error(s) with request`, LogType.ERROR)
+		for (let i = 0; i < data.errors.length; i++) {
+			log(`Error ${i+1}: ${data.errors[i].message}`, LogType.ERROR)
+		}
+		error = true;
+	}
+
+	if (error) {
 		await fetch(webhookUrl, {
 			method: "POST",
 			headers: {
@@ -97,10 +139,10 @@ async function updateLeaderboard(db, leaderboard_key) {
 		return;
 	}
 
-	const top10 = data.data.slice(0, 10);
+	const leaderboardData = data.data.statistic.leaderboard
 
 	// Get movement of each player
-	const result = getMovement(pastLeaderboard.leaderboard, top10);
+	const result = getMovement(pastLeaderboard.leaderboard, leaderboardData);
 
 	const embed = {
 		title: leaderboard.title,
@@ -183,7 +225,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 		{ type: leaderboard_key },
 		{
 			$set: {
-				leaderboard: top10,
+				leaderboard: leaderboardData,
 			},
 		}
 	);

@@ -9,6 +9,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@themysterys/pretty-log": "^1.0.2",
     "mongodb": "^6.13.0"
   }
 }
