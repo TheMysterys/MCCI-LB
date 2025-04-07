@@ -157,7 +157,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
-						entry.player.username
+						entry.player.username.replaceAll("_","\\_")
 					} ${getCrown(
 						entry.player.levels.crownLevel.evolution
 					)} - ${entry.value.toLocaleString()} ${
@@ -175,7 +175,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
-						entry.player.username
+						entry.player.username.replaceAll("_","\\_")
 					} ${getFishing(
 						entry.player.levels.fishingLevel.evolution
 					)} - ${entry.value.toLocaleString()} ${
@@ -193,7 +193,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
-						entry.player.username
+						entry.player.username.replaceAll("_","\\_")
 					} - ${entry.value.toLocaleString()} ${
 						entry.change
 							? `(${
