@@ -153,7 +153,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 					return `${
 						crowns[entry.rank - 1] || "<:__:1338300480501321760>"
 					}**#${
-						entry.rank >= 10
+						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
@@ -171,7 +171,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 					return `${
 						crowns[entry.rank - 1] || "<:__:1338300480501321760>"
 					}**#${
-						entry.rank >= 10
+						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
@@ -189,7 +189,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 					return `${
 						crowns[entry.rank - 1] || "<:__:1338300480501321760>"
 					}**#${
-						entry.rank >= 10
+						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
