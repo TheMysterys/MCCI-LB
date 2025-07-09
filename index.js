@@ -74,12 +74,13 @@ async function main() {
 		await updateLeaderboard(db, leaderboard_key);
 	}
 	client.close();
-	log("Closed connection to MongoDB", LogType.NETWORK)
+	log("Closed connection to MongoDB", LogType.NETWORK);
 }
 
 async function updateLeaderboard(db, leaderboard_key) {
 	// Get webhook url from .env
-	const webhookUrl = process.env[leaderboard_key.toUpperCase()];
+	const webhookUrls = process.env[leaderboard_key.toUpperCase()].split(",");
+
 	const collection = db.collection("leaderboards");
 	const leaderboard = leaderboards[leaderboard_key];
 
@@ -100,25 +101,52 @@ async function updateLeaderboard(db, leaderboard_key) {
 		}),
 	});
 
+	// Skip if the API is down. Also send notice to leaderboard channels. 
+	if (request.status === 502) {
+		log(`MCC Island API is currently down. Skipping...`, LogType.ERROR);
+		for (const webhookUrl of webhookUrls) {
+			await fetch(webhookUrl, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					embeds: [
+						{
+							title: "MCCI API is offline",
+							description: [
+								"Leaderboards will resume tomorrow",
+							].join("\n"),
+							color: 0xff0000,
+						},
+					],
+				}),
+			});
+		}
+		return;
+	}
+
+	let error = false;
+
 	const data = await request.json();
-	let error = false; 
 
 	if (request.status !== 200) {
 		log(`MCC Island API returned status: ${request.status}`, LogType.ERROR);
-		console.error(data)
+		console.error(data);
 		error = true;
 	}
 
 	if (data.errors) {
-		log(`${data.errors.length} Error(s) with request`, LogType.ERROR)
+		log(`${data.errors.length} Error(s) with request`, LogType.ERROR);
 		for (let i = 0; i < data.errors.length; i++) {
-			log(`Error ${i+1}: ${data.errors[i].message}`, LogType.ERROR)
+			log(`Error ${i + 1}: ${data.errors[i].message}`, LogType.ERROR);
 		}
 		error = true;
 	}
 
 	if (error) {
-		await fetch(webhookUrl, {
+		// Only send the error notice to Trophy Hunting Discord channels
+		await fetch(webhookUrls[0], {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -139,7 +167,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 		return;
 	}
 
-	const leaderboardData = data.data.statistic.leaderboard
+	const leaderboardData = data.data.statistic.leaderboard;
 
 	// Get movement of each player
 	const result = getMovement(pastLeaderboard.leaderboard, leaderboardData);
@@ -156,9 +184,12 @@ async function updateLeaderboard(db, leaderboard_key) {
 						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
-					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
-						entry.player.username.replaceAll("_","\\_")
-					} ${getCrown(
+					}** ${
+						entry.direction || "<:__:1338300480501321760>"
+					} - ${entry.player.username.replaceAll(
+						"_",
+						"\\_"
+					)} ${getCrown(
 						entry.player.levels.crownLevel.evolution
 					)} - ${entry.value.toLocaleString()} ${
 						entry.change
@@ -174,9 +205,12 @@ async function updateLeaderboard(db, leaderboard_key) {
 						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
-					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
-						entry.player.username.replaceAll("_","\\_")
-					} ${getFishing(
+					}** ${
+						entry.direction || "<:__:1338300480501321760>"
+					} - ${entry.player.username.replaceAll(
+						"_",
+						"\\_"
+					)} ${getFishing(
 						entry.player.levels.fishingLevel.evolution
 					)} - ${entry.value.toLocaleString()} ${
 						entry.change
@@ -192,9 +226,12 @@ async function updateLeaderboard(db, leaderboard_key) {
 						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
-					}** ${entry.direction || "<:__:1338300480501321760>"} - ${
-						entry.player.username.replaceAll("_","\\_")
-					} - ${entry.value.toLocaleString()} ${
+					}** ${
+						entry.direction || "<:__:1338300480501321760>"
+					} - ${entry.player.username.replaceAll(
+						"_",
+						"\\_"
+					)} - ${entry.value.toLocaleString()} ${
 						entry.change
 							? `(${
 									entry.change > 0 ? "+" : ""
@@ -210,15 +247,17 @@ async function updateLeaderboard(db, leaderboard_key) {
 		timestamp: new Date(),
 	};
 
-	await fetch(webhookUrl, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			embeds: [embed],
-		}),
-	});
+	for (const webhookUrl of webhookUrls) {
+		await fetch(webhookUrl, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				embeds: [embed],
+			}),
+		});
+	}
 
 	// Update leaderboard in database
 	await collection.updateOne(
