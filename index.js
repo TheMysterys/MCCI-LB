@@ -6,8 +6,8 @@ const client = new MongoClient(process.env.MONGO_URI);
 
 const crowns = [
 	"<:CROWN:1122664056160010323>",
-	"<:1_:1313736388872507484>",
-	"<:5_:1313736416316096532>",
+	"<:1_:1394998866461593710>",
+	"<:5_:1394998874816385064>",
 ];
 
 const query = `query Leaderboard($key: String!) {
@@ -179,13 +179,13 @@ async function updateLeaderboard(db, leaderboard_key) {
 			.map((entry) => {
 				if (leaderboard_key === "overall") {
 					return `${
-						crowns[entry.rank - 1] || "<:__:1338300480501321760>"
+						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
 					}**#${
 						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${
-						entry.direction || "<:__:1338300480501321760>"
+						entry.direction || "<:__:1394998791458787348>"
 					} - ${entry.player.username.replaceAll(
 						"_",
 						"\\_"
@@ -200,13 +200,13 @@ async function updateLeaderboard(db, leaderboard_key) {
 					}`;
 				} else if (leaderboard_key === "fishing") {
 					return `${
-						crowns[entry.rank - 1] || "<:__:1338300480501321760>"
+						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
 					}**#${
 						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${
-						entry.direction || "<:__:1338300480501321760>"
+						entry.direction || "<:__:1394998791458787348>"
 					} - ${entry.player.username.replaceAll(
 						"_",
 						"\\_"
@@ -221,13 +221,13 @@ async function updateLeaderboard(db, leaderboard_key) {
 					}`;
 				} else {
 					return `${
-						crowns[entry.rank - 1] || "<:__:1338300480501321760>"
+						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
 					}**#${
 						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
 					}** ${
-						entry.direction || "<:__:1338300480501321760>"
+						entry.direction || "<:__:1394998791458787348>"
 					} - ${entry.player.username.replaceAll(
 						"_",
 						"\\_"
