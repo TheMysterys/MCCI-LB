@@ -50,11 +50,11 @@ const leaderboards = {
 		title: "Style Trophy Leaderboard",
 		color: 0xe86bff,
 	},
-	/* bonus: {
+	bonus: {
 		statistic: "trophies_bonus",
 		title: "Bonus Trophy Leaderboard",
 		color: 0xaae0e0,
-	}, */
+	},
 	reputation: {
 		statistic: "royal_reputation",
 		title: "Royal Reputation Leaderboard",
@@ -181,6 +181,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 		switch (error) {
 			case APIErrors.API_OFFLINE: {
 				for (const webhookUrl of webhookUrls) {
+					if (webhookUrl == "") continue;
 					await fetch(webhookUrl, {
 						method: "POST",
 						headers: {
@@ -203,6 +204,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 			}
 			case (APIErrors.UNKNOWN_STATUS, APIErrors.REQUEST_ERROR): {
 				// Only send the error notice to Trophy Hunting Discord channels
+				if (webhookUrls[0] == "") return;
 				await fetch(webhookUrls[0], {
 					method: "POST",
 					headers: {
@@ -311,6 +313,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 	};
 
 	for (const webhookUrl of webhookUrls) {
+		if (webhookUrl == "") continue;
 		await fetch(webhookUrl, {
 			method: "POST",
 			headers: {
