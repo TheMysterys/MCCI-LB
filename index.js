@@ -313,7 +313,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 	};
 
 	for (const webhookUrl of webhookUrls) {
-		if (webhookUrl == "") continue;
+		if (webhookUrl.trim() == "") continue;
 		await fetch(webhookUrl, {
 			method: "POST",
 			headers: {
