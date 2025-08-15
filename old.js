@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
 const { getFishing, getCrown } = require("./emojis");
-const { log, LogType, logException } = require("@themysterys/pretty-log");
+const { log, LogType } = require("@themysterys/pretty-log");
 
 const client = new MongoClient(process.env.MONGO_URI);
 
@@ -10,9 +10,9 @@ const crowns = [
 	"<:5_:1313736416316096532>",
 ];
 
-const query = `query Leaderboard($key: String!, $offset: Int!) {
+const query = `query Leaderboard($key: String!) {
   statistic(key: $key) {
-    leaderboard(amount: 50, offset: $offset) {
+    leaderboard(amount: 20) {
       player {
         uuid
         username
@@ -50,11 +50,6 @@ const leaderboards = {
 		title: "Style Trophy Leaderboard",
 		color: 0xe86bff,
 	},
-	/* bonus: {
-		statistic: "trophies_bonus",
-		title: "Bonus Trophy Leaderboard",
-		color: 0xaae0e0,
-	}, */
 	reputation: {
 		statistic: "royal_reputation",
 		title: "Royal Reputation Leaderboard",
@@ -63,14 +58,8 @@ const leaderboards = {
 	fishing: {
 		statistic: "trophies_fishing",
 		title: "Fishing Leaderboard",
-		color: 0x89daff,
+		color: 0x46c8d3,
 	},
-};
-
-const APIErrors = {
-	API_OFFLINE: 1, // API is offline
-	UNKNOWN_STATUS: 2, // Returned a status that wasn't 200
-	REQUEST_ERROR: 3, // Issue with request query
 };
 
 async function main() {
@@ -88,7 +77,17 @@ async function main() {
 	log("Closed connection to MongoDB", LogType.NETWORK);
 }
 
-async function getLBData(leaderboard) {
+async function updateLeaderboard(db, leaderboard_key) {
+	// Get webhook url from .env
+	const webhookUrls = process.env[leaderboard_key.toUpperCase()].split(",");
+
+	const collection = db.collection("leaderboards");
+	const leaderboard = leaderboards[leaderboard_key];
+
+	// get past leaderboard
+	const pastLeaderboard = await collection.findOne({ type: leaderboard_key });
+
+	// get current leaderboard
 	const request = await fetch("https://api.mccisland.net/graphql", {
 		method: "POST",
 		headers: {
@@ -98,142 +97,80 @@ async function getLBData(leaderboard) {
 		},
 		body: JSON.stringify({
 			query,
-			variables: { key: leaderboard.statistic, offset: 0 },
+			variables: { key: leaderboard.statistic },
 		}),
 	});
 
-	const request2 = await fetch("https://api.mccisland.net/graphql", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"User-Agent": "Trophy Hunters Leaderboards",
-			"X-API-Key": process.env.API_KEY,
-		},
-		body: JSON.stringify({
-			query,
-			variables: { key: leaderboard.statistic, offset: 50 },
-		}),
-	});
-
-	// Check if API down
-	if (request.status === 502 || request2.status === 502) {
+	// Skip if the API is down. Also send notice to leaderboard channels. 
+	if (request.status === 502) {
 		log(`MCC Island API is currently down. Skipping...`, LogType.ERROR);
-		return { data: null, error: APIErrors.API_OFFLINE };
-	}
-
-	let rawData, rawData2;
-
-	try {
-		rawData = await request.json();
-		rawData2 = await request2.json();
-	} catch (e) {
-		logException(e);
-		return { data: null, error: APIErrors.API_OFFLINE };
-	}
-
-	if (request.status !== 200 || request2.status !== 200) {
-		log(`MCC Island API returned status: ${request.status}`, LogType.ERROR);
-		console.error("Request 1:", rawData);
-		console.error("Request 2:", rawData2);
-		return { data: null, error: APIErrors.UNKNOWN_STATUS };
-	}
-
-	if (rawData.errors) {
-		log(`${rawData.errors.length} Error(s) with request`, LogType.ERROR);
-		for (let i = 0; i < rawData.errors.length; i++) {
-			log(`Error ${i + 1}: ${rawData.errors[i].message}`, LogType.ERROR);
-		}
-		return { data: null, error: APIErrors.REQUEST_ERROR };
-	}
-	if (rawData2.errors) {
-		log(`${rawData2.errors.length} Error(s) with request`, LogType.ERROR);
-		for (let i = 0; i < rawData2.errors.length; i++) {
-			log(`Error ${i + 1}: ${rawData2.errors[i].message}`, LogType.ERROR);
-		}
-		return { data: null, error: APIErrors.REQUEST_ERROR };
-	}
-
-	const leaderboardData1 = rawData.data.statistic.leaderboard;
-	const leaderboardData2 = rawData2.data.statistic.leaderboard;
-
-	const fullLeaderboard = [...leaderboardData1, ...leaderboardData2];
-
-	return { data: fullLeaderboard, error: null };
-}
-
-async function updateLeaderboard(db, leaderboard_key) {
-	const webhookUrls = process.env[leaderboard_key.toUpperCase()].split(",");
-	const leaderboard = leaderboards[leaderboard_key];
-	const collection = db.collection(`${leaderboard_key}_leaderboards`);
-
-	// get past leaderboard
-	const pastLeaderboardData = await collection
-		.find()
-		.sort({ date: -1 })
-		.limit(1)
-		.toArray();
-	const pastDiscordLeaderboard =
-		pastLeaderboardData[0]?.data.slice(0, 25) ?? [];
-
-	const { data, error } = await getLBData(leaderboard);
-
-	if (error) {
-		switch (error) {
-			case APIErrors.API_OFFLINE: {
-				for (const webhookUrl of webhookUrls) {
-					await fetch(webhookUrl, {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
+		for (const webhookUrl of webhookUrls) {
+			await fetch(webhookUrl, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					embeds: [
+						{
+							title: "MCCI API is offline",
+							description: [
+								"Leaderboards will resume tomorrow",
+							].join("\n"),
+							color: 0xff0000,
 						},
-						body: JSON.stringify({
-							embeds: [
-								{
-									title: "MCCI API is offline",
-									description: [
-										"Leaderboards will resume tomorrow",
-									].join("\n"),
-									color: 0xff0000,
-								},
-							],
-						}),
-					});
-				}
-				break;
-			}
-			case (APIErrors.UNKNOWN_STATUS, APIErrors.REQUEST_ERROR): {
-				// Only send the error notice to Trophy Hunting Discord channels
-				await fetch(webhookUrls[0], {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						embeds: [
-							{
-								title: "Error Updating Leaderboard",
-								description: [
-									data.error,
-									"Please contact TheMysterys",
-								].join("\n"),
-								color: 0xff0000,
-							},
-						],
-					}),
-				});
-				break;
-			}
+					],
+				}),
+			});
 		}
 		return;
 	}
 
-	const discordLeaderboard = data.slice(0, 25);
+	let error = false;
+
+	const data = await request.json();
+
+	if (request.status !== 200) {
+		log(`MCC Island API returned status: ${request.status}`, LogType.ERROR);
+		console.error(data);
+		error = true;
+	}
+
+	if (data.errors) {
+		log(`${data.errors.length} Error(s) with request`, LogType.ERROR);
+		for (let i = 0; i < data.errors.length; i++) {
+			log(`Error ${i + 1}: ${data.errors[i].message}`, LogType.ERROR);
+		}
+		error = true;
+	}
+
+	if (error) {
+		// Only send the error notice to Trophy Hunting Discord channels
+		await fetch(webhookUrls[0], {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				embeds: [
+					{
+						title: "Error Updating Leaderboard",
+						description: [
+							data.error,
+							"Please contact TheMysterys",
+						].join("\n"),
+						color: 0xff0000,
+					},
+				],
+			}),
+		});
+		return;
+	}
+
+	const leaderboardData = data.data.statistic.leaderboard;
 
 	// Get movement of each player
-	const result = getMovement(
-		pastDiscordLeaderboard,
-		discordLeaderboard
-	).slice(0, 20);
+	const result = getMovement(pastLeaderboard.leaderboard, leaderboardData);
 
 	const embed = {
 		title: leaderboard.title,
@@ -322,11 +259,15 @@ async function updateLeaderboard(db, leaderboard_key) {
 		});
 	}
 
-	// Insert leaderboard in database for graphs
-	await collection.insertOne({
-		date: new Date(),
-		data,
-	});
+	// Update leaderboard in database
+	await collection.updateOne(
+		{ type: leaderboard_key },
+		{
+			$set: {
+				leaderboard: leaderboardData,
+			},
+		}
+	);
 }
 
 function getMovement(pastLeaderboard, currentLeaderboard) {
