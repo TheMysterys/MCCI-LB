@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
 const { getFishing, getCrown } = require("./emojis");
 const { log, LogType, logException } = require("@themysterys/pretty-log");
+const { query } = require("./query")
 
 const client = new MongoClient(process.env.MONGO_URI);
 
@@ -9,30 +10,6 @@ const crowns = [
 	"<:1_:1394998866461593710>",
 	"<:5_:1394998874816385064>",
 ];
-
-const query = `query Leaderboard($key: String!, $offset: Int!) {
-  statistic(key: $key) {
-    leaderboard(amount: 50, offset: $offset) {
-      player {
-        uuid
-        username
-        ranks
-        levels: crownLevel {
-          crownLevel: levelData {
-            evolution
-            level
-          }
-          fishingLevel: fishingLevelData {
-            evolution
-            level
-          }
-        }
-      }
-      rank
-      value
-    }
-  }
-}`;
 
 const leaderboards = {
 	overall: {
@@ -76,19 +53,15 @@ const APIErrors = {
 async function main() {
 	await client.connect();
 	const db = client.db("trophy-hunters");
-
 	log("Connected to MongoDB", LogType.NETWORK);
 
-	for (const leaderboard_key in leaderboards) {
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		log(`Updating leaderboard: ${leaderboard_key}`);
-		await updateLeaderboard(db, leaderboard_key);
-	}
+	await updateLeaderboard(db);
+
 	client.close();
 	log("Closed connection to MongoDB", LogType.NETWORK);
 }
 
-async function getLBData(leaderboard) {
+async function getLBData() {
 	const request = await fetch("https://api.mccisland.net/graphql", {
 		method: "POST",
 		headers: {
@@ -98,43 +71,26 @@ async function getLBData(leaderboard) {
 		},
 		body: JSON.stringify({
 			query,
-			variables: { key: leaderboard.statistic, offset: 0 },
-		}),
-	});
-
-	const request2 = await fetch("https://api.mccisland.net/graphql", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"User-Agent": "Trophy Hunters Leaderboards",
-			"X-API-Key": process.env.API_KEY,
-		},
-		body: JSON.stringify({
-			query,
-			variables: { key: leaderboard.statistic, offset: 50 },
 		}),
 	});
 
 	// Check if API down
-	if (request.status === 502 || request2.status === 502) {
+	if (request.status === 502) {
 		log(`MCC Island API is currently down. Skipping...`, LogType.ERROR);
 		return { data: null, error: APIErrors.API_OFFLINE };
 	}
 
-	let rawData, rawData2;
-
+	let rawData
 	try {
 		rawData = await request.json();
-		rawData2 = await request2.json();
 	} catch (e) {
 		logException(e);
 		return { data: null, error: APIErrors.API_OFFLINE };
 	}
 
-	if (request.status !== 200 || request2.status !== 200) {
+	if (request.status !== 200) {
 		log(`MCC Island API returned status: ${request.status}`, LogType.ERROR);
-		console.error("Request 1:", rawData);
-		console.error("Request 2:", rawData2);
+		console.error("Response:", rawData);
 		return { data: null, error: APIErrors.UNKNOWN_STATUS };
 	}
 
@@ -145,44 +101,53 @@ async function getLBData(leaderboard) {
 		}
 		return { data: null, error: APIErrors.REQUEST_ERROR };
 	}
-	if (rawData2.errors) {
-		log(`${rawData2.errors.length} Error(s) with request`, LogType.ERROR);
-		for (let i = 0; i < rawData2.errors.length; i++) {
-			log(`Error ${i + 1}: ${rawData2.errors[i].message}`, LogType.ERROR);
-		}
-		return { data: null, error: APIErrors.REQUEST_ERROR };
-	}
 
-	const leaderboardData1 = rawData.data.statistic.leaderboard;
-	const leaderboardData2 = rawData2.data.statistic.leaderboard;
 
-	const fullLeaderboard = [...leaderboardData1, ...leaderboardData2];
-
-	return { data: fullLeaderboard, error: null };
+	return { data: rawData.data, error: null };
 }
 
-async function updateLeaderboard(db, leaderboard_key) {
-	const webhookUrls = process.env[leaderboard_key.toUpperCase()].split(",");
-	const leaderboard = leaderboards[leaderboard_key];
-	const collection = db.collection(`${leaderboard_key}_leaderboards`);
+async function updateLeaderboard(db) {
 
-	// get past leaderboard
-	const pastLeaderboardData = await collection
-		.find()
-		.sort({ date: -1 })
-		.limit(1)
-		.toArray();
-	const pastDiscordLeaderboard =
-		pastLeaderboardData[0]?.data.slice(0, 25) ?? [];
+	log("Fetching Leaderboard data from API")
+	const { data, error } = await getLBData();
 
-	const { data, error } = await getLBData(leaderboard);
+	for (const leaderboard_key in leaderboards) {
+		log(`Updating leaderboard: ${leaderboard_key}`);
 
-	if (error) {
-		switch (error) {
-			case APIErrors.API_OFFLINE: {
-				for (const webhookUrl of webhookUrls) {
-					if (webhookUrl == "") continue;
-					await fetch(webhookUrl, {
+		const webhookUrls = process.env[leaderboard_key.toUpperCase()].split(",");
+		const leaderboard = leaderboards[leaderboard_key];
+		const collection = db.collection(`${leaderboard_key}_leaderboards`);
+
+		// Post Errors
+		if (error) {
+			switch (error) {
+				case APIErrors.API_OFFLINE: {
+					for (const webhookUrl of webhookUrls) {
+						if (webhookUrl == "") continue;
+						await fetch(webhookUrl, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({
+								embeds: [
+									{
+										title: "MCCI API is offline",
+										description: [
+											"Leaderboards will resume tomorrow",
+										].join("\n"),
+										color: 0xff0000,
+									},
+								],
+							}),
+						});
+					}
+					break;
+				}
+				case (APIErrors.UNKNOWN_STATUS, APIErrors.REQUEST_ERROR): {
+					// Only send the error notice to Trophy Hunting Discord channels
+					if (webhookUrls[0] == "") return;
+					await fetch(webhookUrls[0], {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
@@ -190,146 +155,121 @@ async function updateLeaderboard(db, leaderboard_key) {
 						body: JSON.stringify({
 							embeds: [
 								{
-									title: "MCCI API is offline",
+									title: "Error Updating Leaderboard",
 									description: [
-										"Leaderboards will resume tomorrow",
+										data.error,
+										"Please contact TheMysterys",
 									].join("\n"),
 									color: 0xff0000,
 								},
 							],
 						}),
 					});
+					break;
 				}
-				break;
 			}
-			case (APIErrors.UNKNOWN_STATUS, APIErrors.REQUEST_ERROR): {
-				// Only send the error notice to Trophy Hunting Discord channels
-				if (webhookUrls[0] == "") return;
-				await fetch(webhookUrls[0], {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						embeds: [
-							{
-								title: "Error Updating Leaderboard",
-								description: [
-									data.error,
-									"Please contact TheMysterys",
-								].join("\n"),
-								color: 0xff0000,
-							},
-						],
-					}),
-				});
-				break;
-			}
+			return;
 		}
-		return;
-	}
 
-	const discordLeaderboard = data.slice(0, 25);
+		// get past leaderboard
+		const pastLeaderboardData = await collection
+			.find()
+			.sort({ date: -1 })
+			.limit(1)
+			.toArray();
+		
+		const pastDiscordLeaderboard =
+			pastLeaderboardData[0]?.data.slice(0, 25) ?? [];
 
-	// Get movement of each player
-	const result = getMovement(
-		pastDiscordLeaderboard,
-		discordLeaderboard
-	).slice(0, 20);
+		const fullLeaderboard = [...data[leaderboard_key + "1"].leaderboard, ...data[leaderboard_key + "2"].leaderboard]
+	
+		const discordLeaderboard = fullLeaderboard.slice(0, 25);
 
-	const embed = {
-		title: leaderboard.title,
-		color: leaderboard.color,
-		description: result
-			.map((entry) => {
-				if (leaderboard_key === "overall") {
-					return `${
-						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
-					}**#${
-						entry.rank < 10
-							? "\u00A0\u00A0" + entry.rank
-							: entry.rank
-					}** ${
-						entry.direction || "<:__:1394998791458787348>"
-					} - ${entry.player.username.replaceAll(
-						"_",
-						"\\_"
-					)} ${getCrown(
-						entry.player.levels.crownLevel.evolution
-					)} - ${entry.value.toLocaleString()} ${
-						entry.change
-							? `(${
-									entry.change > 0 ? "+" : ""
-							  }${entry.change.toLocaleString()})`
-							: ""
-					}`;
-				} else if (leaderboard_key === "fishing") {
-					return `${
-						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
-					}**#${
-						entry.rank < 10
-							? "\u00A0\u00A0" + entry.rank
-							: entry.rank
-					}** ${
-						entry.direction || "<:__:1394998791458787348>"
-					} - ${entry.player.username.replaceAll(
-						"_",
-						"\\_"
-					)} ${getFishing(
-						entry.player.levels.fishingLevel.evolution
-					)} - ${entry.value.toLocaleString()} ${
-						entry.change
-							? `(${
-									entry.change > 0 ? "+" : ""
-							  }${entry.change.toLocaleString()})`
-							: ""
-					}`;
-				} else {
-					return `${
-						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
-					}**#${
-						entry.rank < 10
-							? "\u00A0\u00A0" + entry.rank
-							: entry.rank
-					}** ${
-						entry.direction || "<:__:1394998791458787348>"
-					} - ${entry.player.username.replaceAll(
-						"_",
-						"\\_"
-					)} - ${entry.value.toLocaleString()} ${
-						entry.change
-							? `(${
-									entry.change > 0 ? "+" : ""
-							  }${entry.change.toLocaleString()})`
-							: ""
-					}`;
-				}
-			})
-			.join("\n"),
-		footer: {
-			text: "Last Updated",
-		},
-		timestamp: new Date(),
-	};
+		// Get movement of each player
+		const result = getMovement(
+			pastDiscordLeaderboard,
+			discordLeaderboard
+		).slice(0, 20);
 
-	for (const webhookUrl of webhookUrls) {
-		if (webhookUrl.trim() == "") continue;
-		await fetch(webhookUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
+		const embed = {
+			title: leaderboard.title,
+			color: leaderboard.color,
+			description: result
+				.map((entry) => {
+					if (leaderboard_key === "overall") {
+						return `${crowns[entry.rank - 1] || "<:__:1394998791458787348>"
+							}**#${entry.rank < 10
+								? "\u00A0\u00A0" + entry.rank
+								: entry.rank
+							}** ${entry.direction || "<:__:1394998791458787348>"
+							} - ${entry.player.username.replaceAll(
+								"_",
+								"\\_"
+							)} ${getCrown(
+								entry.player.levels.crownLevel.evolution
+							)} - ${entry.value.toLocaleString()} ${entry.change
+								? `(${entry.change > 0 ? "+" : ""
+								}${entry.change.toLocaleString()})`
+								: ""
+							}`;
+					} else if (leaderboard_key === "fishing") {
+						return `${crowns[entry.rank - 1] || "<:__:1394998791458787348>"
+							}**#${entry.rank < 10
+								? "\u00A0\u00A0" + entry.rank
+								: entry.rank
+							}** ${entry.direction || "<:__:1394998791458787348>"
+							} - ${entry.player.username.replaceAll(
+								"_",
+								"\\_"
+							)} ${getFishing(
+								entry.player.levels.fishingLevel.evolution
+							)} - ${entry.value.toLocaleString()} ${entry.change
+								? `(${entry.change > 0 ? "+" : ""
+								}${entry.change.toLocaleString()})`
+								: ""
+							}`;
+					} else {
+						return `${crowns[entry.rank - 1] || "<:__:1394998791458787348>"
+							}**#${entry.rank < 10
+								? "\u00A0\u00A0" + entry.rank
+								: entry.rank
+							}** ${entry.direction || "<:__:1394998791458787348>"
+							} - ${entry.player.username.replaceAll(
+								"_",
+								"\\_"
+							)} - ${entry.value.toLocaleString()} ${entry.change
+								? `(${entry.change > 0 ? "+" : ""
+								}${entry.change.toLocaleString()})`
+								: ""
+							}`;
+					}
+				})
+				.join("\n"),
+			footer: {
+				text: "Last Updated",
 			},
-			body: JSON.stringify({
-				embeds: [embed],
-			}),
+			timestamp: new Date(),
+		};
+
+		for (const webhookUrl of webhookUrls) {
+			if (webhookUrl.trim() == "") continue;
+			await fetch(webhookUrl, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					embeds: [embed],
+				}),
+			});
+		}
+
+		// Insert leaderboard in database for graphs
+		await collection.insertOne({
+			date: new Date(),
+			data: fullLeaderboard,
 		});
 	}
-
-	// Insert leaderboard in database for graphs
-	await collection.insertOne({
-		date: new Date(),
-		data,
-	});
 }
 
 function getMovement(pastLeaderboard, currentLeaderboard) {
