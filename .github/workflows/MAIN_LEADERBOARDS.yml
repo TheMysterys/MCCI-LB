@@ -20,7 +20,7 @@ jobs:
               run: npm install
 
             - name: Update leaderboards
-              run: npm run start
+              run: npm run main
               env:
                   MONGO_URI: ${{ secrets.MONGO_URI }}
                   API_KEY: ${{ secrets.API_KEY }}

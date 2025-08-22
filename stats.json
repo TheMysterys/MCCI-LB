@@ -1,0 +1,592 @@
+[
+  {
+    "key": "pw_solo_medals_banked",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_solo_total_medals_banked",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_survival_players_eliminated",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_survival_final_duel_wins",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_survival_leap_4_completion",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_survival_leap_7_completion",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_1_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_2_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_3_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_4_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_5_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_6_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_7_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_1_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_2_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_3_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_4_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_5_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_6_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_7_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_1_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_2_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_3_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_4_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_5_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_6_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_main_7_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "MONTHLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "battle_box_quads_team_rounds_won",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "battle_box_quads_team_first_place",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "battle_box_quads_players_killed",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "sky_battle_summer_remix_survival_first_place",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "sky_battle_summer_remix_survival_top_three",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "sky_battle_summer_remix_players_killed",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "sky_battle_quads_survival_first_place",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "sky_battle_quads_survival_top_three",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "sky_battle_quads_players_killed",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "tgttos_first_place",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "tgttos_top_three",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "tgttos_round_first_place",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "tgttos_chickens_punched",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "rocket_spleef_kills",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "rocket_spleef_first_place",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "rocket_spleef_top_five",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "rocket_spleef_survive_60s",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "rocket_spleef_direct_hits",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_daily_standard_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_daily_advanced_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "pw_daily_expert_cmpl",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "dynaball_players_eliminated",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "dynaball_wins",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "dynaball_blocks_destroyed",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "dynaball_survive_2m",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "community_contribution",
+    "forLeaderboard": true,
+    "rotations": [
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "trophies",
+    "forLeaderboard": true,
+    "rotations": [
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "trophies_skill",
+    "forLeaderboard": true,
+    "rotations": [
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "trophies_style",
+    "forLeaderboard": true,
+    "rotations": [
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "trophies_fishing",
+    "forLeaderboard": true,
+    "rotations": [
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "trophies_bonus",
+    "forLeaderboard": true,
+    "rotations": [
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "crown_level",
+    "forLeaderboard": true,
+    "rotations": [
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "royal_reputation",
+    "forLeaderboard": true,
+    "rotations": [
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "hole_in_the_wall_first_place",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "hole_in_the_wall_top_three",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  },
+  {
+    "key": "hole_in_the_wall_walls_dodged",
+    "forLeaderboard": true,
+    "rotations": [
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY",
+      "LIFETIME"
+    ]
+  }
+]

@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 const { getFishing, getCrown } = require("./emojis");
 const { log, LogType, logException } = require("@themysterys/pretty-log");
-const { query } = require("./query")
+const { mainQuery } = require("./query");
 
 const client = new MongoClient(process.env.MONGO_URI);
 
@@ -70,7 +70,7 @@ async function getLBData() {
 			"X-API-Key": process.env.API_KEY,
 		},
 		body: JSON.stringify({
-			query,
+			query: mainQuery,
 		}),
 	});
 
@@ -80,7 +80,7 @@ async function getLBData() {
 		return { data: null, error: APIErrors.API_OFFLINE };
 	}
 
-	let rawData
+	let rawData;
 	try {
 		rawData = await request.json();
 	} catch (e) {
@@ -102,19 +102,18 @@ async function getLBData() {
 		return { data: null, error: APIErrors.REQUEST_ERROR };
 	}
 
-
 	return { data: rawData.data, error: null };
 }
 
 async function updateLeaderboard(db) {
-
-	log("Fetching Leaderboard data from API")
+	log("Fetching Leaderboard data from API");
 	const { data, error } = await getLBData();
 
 	for (const leaderboard_key in leaderboards) {
 		log(`Updating leaderboard: ${leaderboard_key}`);
 
-		const webhookUrls = process.env[leaderboard_key.toUpperCase()].split(",");
+		const webhookUrls =
+			process.env[leaderboard_key.toUpperCase()].split(",");
 		const leaderboard = leaderboards[leaderboard_key];
 		const collection = db.collection(`${leaderboard_key}_leaderboards`);
 
@@ -177,12 +176,15 @@ async function updateLeaderboard(db) {
 			.sort({ date: -1 })
 			.limit(1)
 			.toArray();
-		
+
 		const pastDiscordLeaderboard =
 			pastLeaderboardData[0]?.data.slice(0, 25) ?? [];
 
-		const fullLeaderboard = [...data[leaderboard_key + "1"].leaderboard, ...data[leaderboard_key + "2"].leaderboard]
-	
+		const fullLeaderboard = [
+			...data[leaderboard_key + "1"].leaderboard,
+			...data[leaderboard_key + "2"].leaderboard,
+		];
+
 		const discordLeaderboard = fullLeaderboard.slice(0, 25);
 
 		// Get movement of each player
@@ -197,51 +199,69 @@ async function updateLeaderboard(db) {
 			description: result
 				.map((entry) => {
 					if (leaderboard_key === "overall") {
-						return `${crowns[entry.rank - 1] || "<:__:1394998791458787348>"
-							}**#${entry.rank < 10
+						return `${
+							crowns[entry.rank - 1] ||
+							"<:__:1394998791458787348>"
+						}**#${
+							entry.rank < 10
 								? "\u00A0\u00A0" + entry.rank
 								: entry.rank
-							}** ${entry.direction || "<:__:1394998791458787348>"
-							} - ${entry.player.username.replaceAll(
-								"_",
-								"\\_"
-							)} ${getCrown(
-								entry.player.levels.crownLevel.evolution
-							)} - ${entry.value.toLocaleString()} ${entry.change
-								? `(${entry.change > 0 ? "+" : ""
-								}${entry.change.toLocaleString()})`
+						}** ${
+							entry.direction || "<:__:1394998791458787348>"
+						} - ${entry.player.username.replaceAll(
+							"_",
+							"\\_"
+						)} ${getCrown(
+							entry.player.levels.crownLevel.evolution
+						)} - ${entry.value.toLocaleString()} ${
+							entry.change
+								? `(${
+										entry.change > 0 ? "+" : ""
+								  }${entry.change.toLocaleString()})`
 								: ""
-							}`;
+						}`;
 					} else if (leaderboard_key === "fishing") {
-						return `${crowns[entry.rank - 1] || "<:__:1394998791458787348>"
-							}**#${entry.rank < 10
+						return `${
+							crowns[entry.rank - 1] ||
+							"<:__:1394998791458787348>"
+						}**#${
+							entry.rank < 10
 								? "\u00A0\u00A0" + entry.rank
 								: entry.rank
-							}** ${entry.direction || "<:__:1394998791458787348>"
-							} - ${entry.player.username.replaceAll(
-								"_",
-								"\\_"
-							)} ${getFishing(
-								entry.player.levels.fishingLevel.evolution
-							)} - ${entry.value.toLocaleString()} ${entry.change
-								? `(${entry.change > 0 ? "+" : ""
-								}${entry.change.toLocaleString()})`
+						}** ${
+							entry.direction || "<:__:1394998791458787348>"
+						} - ${entry.player.username.replaceAll(
+							"_",
+							"\\_"
+						)} ${getFishing(
+							entry.player.levels.fishingLevel.evolution
+						)} - ${entry.value.toLocaleString()} ${
+							entry.change
+								? `(${
+										entry.change > 0 ? "+" : ""
+								  }${entry.change.toLocaleString()})`
 								: ""
-							}`;
+						}`;
 					} else {
-						return `${crowns[entry.rank - 1] || "<:__:1394998791458787348>"
-							}**#${entry.rank < 10
+						return `${
+							crowns[entry.rank - 1] ||
+							"<:__:1394998791458787348>"
+						}**#${
+							entry.rank < 10
 								? "\u00A0\u00A0" + entry.rank
 								: entry.rank
-							}** ${entry.direction || "<:__:1394998791458787348>"
-							} - ${entry.player.username.replaceAll(
-								"_",
-								"\\_"
-							)} - ${entry.value.toLocaleString()} ${entry.change
-								? `(${entry.change > 0 ? "+" : ""
-								}${entry.change.toLocaleString()})`
+						}** ${
+							entry.direction || "<:__:1394998791458787348>"
+						} - ${entry.player.username.replaceAll(
+							"_",
+							"\\_"
+						)} - ${entry.value.toLocaleString()} ${
+							entry.change
+								? `(${
+										entry.change > 0 ? "+" : ""
+								  }${entry.change.toLocaleString()})`
 								: ""
-							}`;
+						}`;
 					}
 				})
 				.join("\n"),
