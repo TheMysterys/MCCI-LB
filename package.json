@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "main": "node main_lbs.js"
+    "main": "node main_lbs.js",
+    "games": "node game_lbs.js"
   },
   "author": "",
   "license": "ISC",
