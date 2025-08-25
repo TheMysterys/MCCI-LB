@@ -67,7 +67,6 @@ async function main() {
 		log(`Saving leaderboard data for game: ${game}`);
 
 		for (const key in leaderboardData[game]) {
-
 			// Insert leaderboard in database for graphs
 			await collection.insertOne({
 				date: new Date(),
@@ -189,6 +188,10 @@ async function updateLeaderboard(db, game) {
 									"Leaderboards will resume tomorrow",
 								].join("\n"),
 								color: 0xff0000,
+								footer: {
+									text: "Errored at",
+								},
+								timestamp: new Date(),
 							},
 						],
 					}),
@@ -210,6 +213,10 @@ async function updateLeaderboard(db, game) {
 									"Please contact TheMysterys",
 								].join("\n"),
 								color: 0xff0000,
+								footer: {
+									text: "Errored at",
+								},
+								timestamp: new Date(),
 							},
 						],
 					}),
