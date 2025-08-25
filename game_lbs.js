@@ -30,14 +30,51 @@ const APIErrors = {
 	REQUEST_ERROR: 3, // Issue with request query
 };
 
+let hasErrored = false;
+const leaderboardData = {
+	tgttos: {},
+	sky_battle: {},
+	battle_box: {},
+	rocket_spleef: {},
+	pw_survivor: {},
+	pw_solo: {},
+	dynaball: {},
+	hitw: {},
+};
+
 async function main() {
 	await client.connect();
 	const db = client.db("leaderboards");
 	log("Connected to MongoDB", LogType.NETWORK);
 
 	for (const game in games) {
+		if (hasErrored) {
+			break;
+		}
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		await updateLeaderboard(db, game);
+	}
+
+	if (hasErrored) {
+		log("There was an error. Data will not be saved.");
+		client.close();
+		log("Closed connection to MongoDB", LogType.NETWORK);
+		return;
+	}
+
+	for (const game in leaderboardData) {
+		const collection = db.collection(`${game}_leaderboards`);
+		log(`Saving leaderboard data for game: ${game}`);
+
+		for (const key in leaderboardData[game]) {
+
+			// Insert leaderboard in database for graphs
+			await collection.insertOne({
+				date: new Date(),
+				key: key,
+				data: leaderboardData[game][key],
+			});
+		}
 	}
 
 	client.close();
@@ -67,7 +104,7 @@ async function getLBData(game) {
 			query = pkSoloQuery;
 			break;
 		}
-		case "pw_survival": {
+		case "pw_survivor": {
 			query = pwSurvivorQuery;
 			break;
 		}
@@ -78,6 +115,10 @@ async function getLBData(game) {
 		case "hitw": {
 			query = hitwQuery;
 			break;
+		}
+		default: {
+			log("How did we get here?", LogType.ERROR);
+			return { data: null, error: APIErrors.REQUEST_ERROR };
 		}
 	}
 	const request = await fetch("https://api.mccisland.net/graphql", {
@@ -130,7 +171,6 @@ async function updateLeaderboard(db, game) {
 	const { data, error } = await getLBData(game);
 
 	const webhookUrl = process.env.GAMES;
-	const collection = db.collection(`${game}_leaderboards`);
 
 	// Post Errors
 	if (error) {
@@ -167,7 +207,6 @@ async function updateLeaderboard(db, game) {
 							{
 								title: "Error Updating Leaderboard",
 								description: [
-									data.error,
 									"Please contact TheMysterys",
 								].join("\n"),
 								color: 0xff0000,
@@ -178,6 +217,7 @@ async function updateLeaderboard(db, game) {
 				break;
 			}
 		}
+		hasErrored = true;
 		return;
 	}
 
@@ -189,14 +229,8 @@ async function updateLeaderboard(db, game) {
 			...data[lb_key + "2"].leaderboard,
 		];
 
-		// Insert leaderboard in database for graphs
-		await collection.insertOne({
-			date: new Date(),
-			key: lb_key,
-			data: fullLeaderboard,
-		});
+		leaderboardData[game][lb_key] = fullLeaderboard;
 	}
-	log(`Saved leaderboard data for game: ${game}`);
 
 	return;
 }
