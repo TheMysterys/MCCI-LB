@@ -1,4 +1,4 @@
-name: Update Leaderboards
+name: Update Game Leaderboards
 on:
     schedule:
         - cron: "0 */1 * * *"
