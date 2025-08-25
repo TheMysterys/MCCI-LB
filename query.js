@@ -520,7 +520,7 @@ const pwSurvivorQuery = `query Leaderboard {
       value
     }
   }
-
+  
   duel1: statistic(key: "pw_survival_final_duel_wins") {
     leaderboard(amount: 50, offset: 0) {
       player {
@@ -563,7 +563,7 @@ const pwSurvivorQuery = `query Leaderboard {
       value
     }
   }
-
+  
   leapFour1: statistic(key: "pw_survival_leap_4_completion") {
     leaderboard(amount: 50, offset: 0) {
       player {
@@ -606,7 +606,7 @@ const pwSurvivorQuery = `query Leaderboard {
       value
     }
   }
-
+  
   leapSeven1: statistic(key: "pw_survival_leap_7_completion") {
     leaderboard(amount: 50, offset: 0) {
       player {
