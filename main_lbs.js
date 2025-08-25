@@ -52,7 +52,7 @@ const APIErrors = {
 
 async function main() {
 	await client.connect();
-	const db = client.db("trophy-hunters");
+	const db = client.db("leaderboards");
 	log("Connected to MongoDB", LogType.NETWORK);
 
 	await updateLeaderboard(db);
