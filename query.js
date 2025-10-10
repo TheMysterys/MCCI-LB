@@ -1494,6 +1494,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1504,6 +1505,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1514,6 +1516,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1524,6 +1527,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1534,6 +1538,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1544,6 +1549,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1554,6 +1560,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1564,6 +1571,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1574,6 +1582,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1584,6 +1593,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1594,6 +1604,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1604,6 +1615,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1614,6 +1626,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1624,6 +1637,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1634,6 +1648,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1644,6 +1659,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1654,6 +1670,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1664,6 +1681,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1674,6 +1692,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value
@@ -1684,6 +1703,7 @@ const factionQuery = `query Factions {
       player {
         username
         uuid
+        ranks
       }
       rank
       value

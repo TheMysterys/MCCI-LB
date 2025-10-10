@@ -293,7 +293,7 @@ async function updateLeaderboard() {
 				faction,
 				uuid: entry.player.uuid,
 				username: entry.player.username,
-				ranks: entry.ranks,
+				ranks: entry.player.ranks,
 				rank: entry.rank,
 				value: entry.value,
 			}))
