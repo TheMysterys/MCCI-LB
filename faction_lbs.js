@@ -1,17 +1,14 @@
-const { MongoClient } = require("mongodb");
-const { getFishing, getCrown } = require("./emojis");
 const { log, LogType, logException } = require("@themysterys/pretty-log");
-const { mainQuery, factionQuery } = require("./query");
+const { factionQuery } = require("./query");
 
-const { createClient } = require('@clickhouse/client')
+const { createClient } = require("@clickhouse/client");
 
 const client = createClient({
 	url: process.env.CLICKHOUSE_URL,
 	password: process.env.CLICKHOUSE_PASSWORD,
 	username: process.env.CLICKHOUSE_USER,
 	database: "mcci",
-
-})
+});
 
 const crowns = [
 	"<:CROWN:1122664056160010323>",
@@ -20,16 +17,16 @@ const crowns = [
 ];
 
 const factionKeys = [
-	'RED_RABBITS',
-	'ORANGE_OCELOTS',
-	'YELLOW_YAKS',
-	'GREEN_GECKOS',
-	'LIME_LLAMAS',
-	'CYAN_COYOTES',
-	'BLUE_BATS',
-	'AQUA_AXOLOTLS',
-	'PINK_PARROTS',
-	'PURPLE_PANDAS'
+	"RED_RABBITS",
+	"ORANGE_OCELOTS",
+	"YELLOW_YAKS",
+	"GREEN_GECKOS",
+	"LIME_LLAMAS",
+	"CYAN_COYOTES",
+	"BLUE_BATS",
+	"AQUA_AXOLOTLS",
+	"PINK_PARROTS",
+	"PURPLE_PANDAS",
 ];
 
 const factionColor = {
@@ -42,8 +39,8 @@ const factionColor = {
 	PINK_PARROTS: 0xfc54fc,
 	PURPLE_PANDAS: 0x8632fc,
 	RED_RABBITS: 0xfc5453,
-	YELLOW_YAKS: 0xfcfc54
-}
+	YELLOW_YAKS: 0xfcfc54,
+};
 
 const factionIcon = {
 	AQUA_AXOLOTLS: "<:aqua:1425958474423996436>",
@@ -55,8 +52,8 @@ const factionIcon = {
 	PINK_PARROTS: "<:pink:1425958558452813905>",
 	PURPLE_PANDAS: "<:purple:1425958568296714300>",
 	RED_RABBITS: "<:red:1425958579365613609>",
-	YELLOW_YAKS: "<:yellow:1425958587074744490>"
-}
+	YELLOW_YAKS: "<:yellow:1425958587074744490>",
+};
 
 const APIErrors = {
 	API_OFFLINE: 1, // API is offline
@@ -198,11 +195,11 @@ async function updateLeaderboard() {
 				FROM mcci.leaderboard_factions
 				GROUP BY name
 				ORDER BY rank ASC;`,
-		format: 'JSONEachRow',
-	})
+		format: "JSONEachRow",
+	});
 
-	const pastFactionsLeaderboard = await factionRows.json() ?? []
-	const currentFactionsLeaderboard = data.factionLeaderboard
+	const pastFactionsLeaderboard = (await factionRows.json()) ?? [];
+	const currentFactionsLeaderboard = data.factionLeaderboard;
 
 	// Get movement of each player
 	const factionsResult = getFactionMovement(
@@ -210,13 +207,19 @@ async function updateLeaderboard() {
 		currentFactionsLeaderboard
 	);
 
-	if (factionsResult.some((entry) => entry.change !== 0) || pastFactionsLeaderboard.length == 0) {
+	if (
+		factionsResult.some((entry) => entry.change !== 0) ||
+		pastFactionsLeaderboard.length == 0
+	) {
 		function factionName(str) {
-			str = str.replace(/_/g, ' ').toLowerCase();
+			str = str.replace(/_/g, " ").toLowerCase();
 
-			return str.split(' ').map(word => {
-				return word.charAt(0).toUpperCase() + word.slice(1);
-			}).join(' ');
+			return str
+				.split(" ")
+				.map((word) => {
+					return word.charAt(0).toUpperCase() + word.slice(1);
+				})
+				.join(" ");
 		}
 
 		const embed = {
@@ -224,18 +227,24 @@ async function updateLeaderboard() {
 			color: factionColor[factionsResult[0].name],
 			description: factionsResult
 				.map((entry) => {
-					return `${crowns[entry.rank - 1] ||
-						"<:__:1394998791458787348>"
-						}**#${entry.rank < 10
+					return `${
+						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
+					}**#${
+						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
-						}** ${entry.direction || "<:__:1394998791458787348>"
-						} - ${factionIcon[entry.name]}${factionName(entry.name)} - ${entry.value.toLocaleString()}% ${entry.change !== undefined && entry.change !== 0
-							? `(${entry.change > 0 ? "+" : ""}${entry.change.toLocaleString()}%)`
+					}** ${entry.direction || "<:__:1394998791458787348>"} - ${
+						factionIcon[entry.name]
+					}${factionName(
+						entry.name
+					)} - ${entry.value.toLocaleString()}% ${
+						entry.change !== undefined && entry.change !== 0
+							? `(${
+									entry.change > 0 ? "+" : ""
+							  }${entry.change.toLocaleString()}%)`
 							: ""
-						}`;
-				}
-				)
+					}`;
+				})
 				.join("\n"),
 			footer: {
 				text: "Last Updated",
@@ -256,9 +265,8 @@ async function updateLeaderboard() {
 			});
 		}
 	} else {
-		log("Factions leaderboard did not change", LogType.INFORMATION)
+		log("Factions leaderboard did not change", LogType.INFORMATION);
 	}
-
 
 	const pastTop20Rows = await client.query({
 		query: `
@@ -277,25 +285,29 @@ async function updateLeaderboard() {
 		format: "JSONEachRow",
 	});
 
-	const pastTop20 = await pastTop20Rows.json() ?? [];
+	const pastTop20 = (await pastTop20Rows.json()) ?? [];
 
-	const allFactionPlayers = Object.entries(groupedLeaderboards)
-		.flatMap(([faction, players]) =>
+	const allFactionPlayers = Object.entries(groupedLeaderboards).flatMap(
+		([faction, players]) =>
 			players.map((entry) => ({
 				faction,
 				uuid: entry.player.uuid,
 				username: entry.player.username,
+				ranks: entry.ranks,
 				rank: entry.rank,
 				value: entry.value,
 			}))
-		);
+	);
 
-	const currentTop20 = allFactionPlayers.sort((a, b) => b.value - a.value).slice(0, 20);
-
+	const currentTop20 = allFactionPlayers
+		.sort((a, b) => b.value - a.value)
+		.slice(0, 20);
 
 	const top20Result = currentTop20.map((currentEntry, idx) => {
-		const pastIndex = pastTop20.findIndex((p) => p.uuid === currentEntry.uuid);
-		let past = pastTop20[pastIndex]
+		const pastIndex = pastTop20.findIndex(
+			(p) => p.uuid === currentEntry.uuid
+		);
+		let past = pastTop20[pastIndex];
 		let change = past ? currentEntry.value - past.value : 0;
 		let direction = "";
 
@@ -311,25 +323,32 @@ async function updateLeaderboard() {
 		};
 	});
 
-	if (top20Result.some((entry) => entry.change !== 0) || pastTop20.length == 0) {
+	if (
+		top20Result.some((entry) => entry.change !== 0) ||
+		pastTop20.length == 0
+	) {
 		const top20Embed = {
 			title: "Top 20 Players Across All Factions",
 			color: 0xfccf03,
 			description: top20Result
 				.map((entry) => {
-					return `${crowns[entry.rank - 1] ||
-						"<:__:1394998791458787348>"
-						}**#${entry.rank < 10
+					return `${
+						crowns[entry.rank - 1] || "<:__:1394998791458787348>"
+					}**#${
+						entry.rank < 10
 							? "\u00A0\u00A0" + entry.rank
 							: entry.rank
-						}** ${entry.direction || "<:__:1394998791458787348>"
-						} - ${entry.username.replaceAll(
-							"_",
-							"\\_"
-						)}${factionIcon[entry.faction]} - ${entry.value.toLocaleString()}XP ${entry.change !== undefined && entry.change !== 0
-							? `(${entry.change > 0 ? "+" : ""}${entry.change.toLocaleString()}XP)`
+					}** ${
+						entry.direction || "<:__:1394998791458787348>"
+					} - ${entry.username.replaceAll("_", "\\_")}${
+						factionIcon[entry.faction]
+					} - ${entry.value.toLocaleString()}XP ${
+						entry.change !== undefined && entry.change !== 0
+							? `(${
+									entry.change > 0 ? "+" : ""
+							  }${entry.change.toLocaleString()}XP)`
 							: ""
-						}`
+					}`;
 				})
 				.join("\n"),
 			footer: { text: "Last Updated" },
@@ -349,22 +368,21 @@ async function updateLeaderboard() {
 			});
 		}
 	} else {
-		log("Factions top 20 leaderboard did not change", LogType.INFORMATION)
+		log("Factions top 20 leaderboard did not change", LogType.INFORMATION);
 	}
-
 
 	// Insert factions leaderboard in database for graphs
 	await client.insert({
 		table: "leaderboard_factions",
-		values: currentFactionsLeaderboard.map(entry => ({
+		values: currentFactionsLeaderboard.map((entry) => ({
 			name: entry.name,
 			value: entry.value,
-			rank: entry.rank
+			rank: entry.rank,
 		})),
-		format: "JSONEachRow"
-	})
+		format: "JSONEachRow",
+	});
 
-	log("Inserted factions leaderboard into Clickhouse", LogType.SUCCESS)
+	log("Inserted factions leaderboard into Clickhouse", LogType.SUCCESS);
 
 	// Insert top players for each faction
 	await client.insert({
@@ -373,8 +391,10 @@ async function updateLeaderboard() {
 		format: "JSONEachRow",
 	});
 
-	log(`Inserted ${allFactionPlayers.length} faction player rows into ClickHouse`, LogType.SUCCESS)
-
+	log(
+		`Inserted ${allFactionPlayers.length} faction player rows into ClickHouse`,
+		LogType.SUCCESS
+	);
 }
 
 function getFactionMovement(pastLeaderboard, currentLeaderboard) {
