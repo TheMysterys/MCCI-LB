@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "main": "node main_lbs.js",
-    "games": "node game_lbs.js"
+    "games": "node game_lbs.js",
+    "factions": "node faction_lbs.js"
   },
   "author": "",
   "license": "ISC",
