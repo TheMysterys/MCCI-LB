@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@clickhouse/client": "^1.12.1",
     "@themysterys/pretty-log": "^1.0.2",
     "mongodb": "^6.13.0"
   }

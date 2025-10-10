@@ -1483,6 +1483,214 @@ const rocketQuery = `query Leaderboard {
 }
 `;
 
+const factionQuery = `query Factions {
+  factionLeaderboard {
+    name
+    rank
+    value
+  }
+  RED_RABBITS1: statistic(key: "faction_red") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  RED_RABBITS2: statistic(key: "faction_red") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  ORANGE_OCELOTS1: statistic(key: "faction_orange") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  ORANGE_OCELOTS2: statistic(key: "faction_orange") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  YELLOW_YAKS1: statistic(key: "faction_yellow") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  YELLOW_YAKS2: statistic(key: "faction_yellow") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  GREEN_GECKOS1: statistic(key: "faction_green") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  GREEN_GECKOS2: statistic(key: "faction_green") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  LIME_LLAMAS1: statistic(key: "faction_lime") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  LIME_LLAMAS2: statistic(key: "faction_lime") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  CYAN_COYOTES1: statistic(key: "faction_cyan") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  CYAN_COYOTES2: statistic(key: "faction_cyan") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  BLUE_BATS1: statistic(key: "faction_blue") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  BLUE_BATS2: statistic(key: "faction_blue") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  AQUA_AXOLOTLS1: statistic(key: "faction_aqua") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  AQUA_AXOLOTLS2: statistic(key: "faction_aqua") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  PINK_PARROTS1: statistic(key: "faction_pink") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  PINK_PARROTS2: statistic(key: "faction_pink") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  PURPLE_PANDAS1: statistic(key: "faction_purple") {
+    leaderboard(amount: 50, offset: 0) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+  PURPLE_PANDAS2: statistic(key: "faction_purple") {
+    leaderboard(amount: 50, offset: 50) {
+      player {
+        username
+        uuid
+      }
+      rank
+      value
+    }
+  }
+}`
+
 module.exports = {
 	mainQuery,
 	hitwQuery,
@@ -1493,4 +1701,5 @@ module.exports = {
 	tgttosQuery,
 	dynaballQuery,
 	rocketQuery,
+  factionQuery
 };
