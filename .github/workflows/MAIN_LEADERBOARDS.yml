@@ -19,7 +19,7 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Update leaderboards
+            - name: Update Main leaderboards
               run: npm run main
               env:
                   MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -30,3 +30,12 @@ jobs:
                   FISHING: ${{ secrets.FISHING }}
                   REPUTATION: ${{ secrets.REPUTATION }}
                   BONUS: ${{ secrets.BONUS }}
+            - name: Update Faction leaderboards
+              run: npm run factions
+              env:
+                  API_KEY: ${{ secrets.API_KEY }}
+                  FACTIONS: ${{ secrets.FACTIONS }}
+                  CLICKHOUSE_URL: ${{ secrets.CLICKHOUSE_URL }}
+                  CLICKHOUSE_USER: ${{ secrets.CLICKHOUSE_USER }}
+                  CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
+                  
