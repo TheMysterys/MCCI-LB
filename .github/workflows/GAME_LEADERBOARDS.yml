@@ -22,6 +22,8 @@ jobs:
             - name: Update leaderboards
               run: npm run games
               env:
-                  MONGO_URI: ${{ secrets.MONGO_URI }}
+                  CLICKHOUSE_URL: ${{ secrets.CLICKHOUSE_URL }}
+                  CLICKHOUSE_USER: ${{ secrets.CLICKHOUSE_USER }}
+                  CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
                   API_KEY: ${{ secrets.API_KEY }}
                   GAMES: ${{ secrets.GAMES }}
