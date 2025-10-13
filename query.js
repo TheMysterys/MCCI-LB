@@ -259,7 +259,7 @@ const mainQuery = `query Leaderboard {
 }`;
 
 const hitwQuery = `query Leaderboard {
-  first1: statistic(key: "hole_in_the_wall_first_place") {
+  first_place1: statistic(key: "hole_in_the_wall_first_place") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -280,7 +280,7 @@ const hitwQuery = `query Leaderboard {
       value
     }
   }
-  first2: statistic(key: "hole_in_the_wall_first_place") {
+  first_place2: statistic(key: "hole_in_the_wall_first_place") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -302,7 +302,7 @@ const hitwQuery = `query Leaderboard {
     }
   }
 
-  topThree1: statistic(key: "hole_in_the_wall_top_three") {
+  top_three1: statistic(key: "hole_in_the_wall_top_three") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -323,7 +323,7 @@ const hitwQuery = `query Leaderboard {
       value
     }
   }
-  topThree2: statistic(key: "hole_in_the_wall_top_three") {
+  top_three2: statistic(key: "hole_in_the_wall_top_three") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -345,7 +345,7 @@ const hitwQuery = `query Leaderboard {
     }
   }
 
-  walls1: statistic(key: "hole_in_the_wall_walls_dodged") {
+  walls_dodged1: statistic(key: "hole_in_the_wall_walls_dodged") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -366,7 +366,7 @@ const hitwQuery = `query Leaderboard {
       value
     }
   }
-  walls2: statistic(key: "hole_in_the_wall_walls_dodged") {
+  walls_dodged2: statistic(key: "hole_in_the_wall_walls_dodged") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -390,7 +390,7 @@ const hitwQuery = `query Leaderboard {
 }`;
 
 const pkSoloQuery = `query Leaderboard {
-  medals1: statistic(key: "pw_solo_medals_banked") {
+  medals_banked1: statistic(key: "pw_solo_medals_banked") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -411,7 +411,7 @@ const pkSoloQuery = `query Leaderboard {
       value
     }
   }
-  medals2: statistic(key: "pw_solo_medals_banked") {
+  medals_banked2: statistic(key: "pw_solo_medals_banked") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -433,7 +433,7 @@ const pkSoloQuery = `query Leaderboard {
     }
   }
   
-  totalMedals1: statistic(key: "pw_solo_total_medals_banked") {
+  total_medals_banked1: statistic(key: "pw_solo_total_medals_banked") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -454,7 +454,7 @@ const pkSoloQuery = `query Leaderboard {
       value
     }
   }
-  totalMedals2: statistic(key: "pw_solo_total_medals_banked") {
+  total_medals_banked2: statistic(key: "pw_solo_total_medals_banked") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -478,7 +478,7 @@ const pkSoloQuery = `query Leaderboard {
 }`;
 
 const pwSurvivorQuery = `query Leaderboard {
-  outlive1: statistic(key: "pw_survival_players_eliminated") {
+  players_eliminated1: statistic(key: "pw_survival_players_eliminated") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -499,7 +499,7 @@ const pwSurvivorQuery = `query Leaderboard {
       value
     }
   }
-  outlive2: statistic(key: "pw_survival_players_eliminated") {
+  players_eliminated2: statistic(key: "pw_survival_players_eliminated") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -521,7 +521,7 @@ const pwSurvivorQuery = `query Leaderboard {
     }
   }
   
-  duel1: statistic(key: "pw_survival_final_duel_wins") {
+  final_duel_wins1: statistic(key: "pw_survival_final_duel_wins") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -542,7 +542,7 @@ const pwSurvivorQuery = `query Leaderboard {
       value
     }
   }
-  duel2: statistic(key: "pw_survival_final_duel_wins") {
+  final_duel_wins2: statistic(key: "pw_survival_final_duel_wins") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -564,7 +564,7 @@ const pwSurvivorQuery = `query Leaderboard {
     }
   }
   
-  leapFour1: statistic(key: "pw_survival_leap_4_completion") {
+  leap_4_completion1: statistic(key: "pw_survival_leap_4_completion") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -585,7 +585,7 @@ const pwSurvivorQuery = `query Leaderboard {
       value
     }
   }
-  leapFour2: statistic(key: "pw_survival_leap_4_completion") {
+  leap_4_completion2: statistic(key: "pw_survival_leap_4_completion") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -607,7 +607,7 @@ const pwSurvivorQuery = `query Leaderboard {
     }
   }
   
-  leapSeven1: statistic(key: "pw_survival_leap_7_completion") {
+  leap_7_completion1: statistic(key: "pw_survival_leap_7_completion") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -628,7 +628,7 @@ const pwSurvivorQuery = `query Leaderboard {
       value
     }
   }
-  leapSeven2: statistic(key: "pw_survival_leap_7_completion") {
+  leap_7_completion2: statistic(key: "pw_survival_leap_7_completion") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -652,7 +652,7 @@ const pwSurvivorQuery = `query Leaderboard {
 }`;
 
 const bbQuery = `query Leaderboard {
-  team1: statistic(key: "battle_box_quads_team_rounds_won") {
+  team_rounds_won1: statistic(key: "battle_box_quads_team_rounds_won") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -673,7 +673,7 @@ const bbQuery = `query Leaderboard {
       value
     }
   }
-  team2: statistic(key: "battle_box_quads_team_rounds_won") {
+  team_rounds_won2: statistic(key: "battle_box_quads_team_rounds_won") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -695,7 +695,7 @@ const bbQuery = `query Leaderboard {
     }
   }
 
-  first1: statistic(key: "battle_box_quads_team_first_place") {
+  team_first_place1: statistic(key: "battle_box_quads_team_first_place") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -716,7 +716,7 @@ const bbQuery = `query Leaderboard {
       value
     }
   }
-  first2: statistic(key: "battle_box_quads_team_first_place") {
+  team_first_place2: statistic(key: "battle_box_quads_team_first_place") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -738,7 +738,7 @@ const bbQuery = `query Leaderboard {
     }
   }
 
-  kills1: statistic(key: "battle_box_quads_players_killed") {
+  players_killed1: statistic(key: "battle_box_quads_players_killed") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -759,7 +759,7 @@ const bbQuery = `query Leaderboard {
       value
     }
   }
-  kills2: statistic(key: "battle_box_quads_players_killed") {
+  players_killed2: statistic(key: "battle_box_quads_players_killed") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -784,7 +784,7 @@ const bbQuery = `query Leaderboard {
 `;
 
 const sbQuery = `query Leaderboard {
-  topThree1: statistic(key: "sky_battle_quads_survival_top_three") {
+  survival_top_three1: statistic(key: "sky_battle_quads_survival_top_three") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -805,7 +805,7 @@ const sbQuery = `query Leaderboard {
       value
     }
   }
-  topThree2: statistic(key: "sky_battle_quads_survival_top_three") {
+  survival_top_three2: statistic(key: "sky_battle_quads_survival_top_three") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -827,7 +827,7 @@ const sbQuery = `query Leaderboard {
     }
   }
 
-  first1: statistic(key: "sky_battle_quads_survival_first_place") {
+  survival_first_place1: statistic(key: "sky_battle_quads_survival_first_place") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -848,7 +848,7 @@ const sbQuery = `query Leaderboard {
       value
     }
   }
-  first2: statistic(key: "sky_battle_quads_survival_first_place") {
+  survival_first_place2: statistic(key: "sky_battle_quads_survival_first_place") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -870,7 +870,7 @@ const sbQuery = `query Leaderboard {
     }
   }
 
-  kills1: statistic(key: "sky_battle_quads_players_killed") {
+  players_killed1: statistic(key: "sky_battle_quads_players_killed") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -891,7 +891,7 @@ const sbQuery = `query Leaderboard {
       value
     }
   }
-  kills2: statistic(key: "sky_battle_quads_players_killed") {
+  players_killed2: statistic(key: "sky_battle_quads_players_killed") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -916,7 +916,7 @@ const sbQuery = `query Leaderboard {
 `;
 
 const tgttosQuery = `query Leaderboard {
-  topThree1: statistic(key: "tgttos_top_three") {
+  top_three1: statistic(key: "tgttos_top_three") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -937,7 +937,7 @@ const tgttosQuery = `query Leaderboard {
       value
     }
   }
-  topThree2: statistic(key: "tgttos_top_three") {
+  top_three2: statistic(key: "tgttos_top_three") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -959,7 +959,7 @@ const tgttosQuery = `query Leaderboard {
     }
   }
 
-  first1: statistic(key: "tgttos_first_place") {
+  first_place1: statistic(key: "tgttos_first_place") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -980,7 +980,7 @@ const tgttosQuery = `query Leaderboard {
       value
     }
   }
-  first2: statistic(key: "tgttos_first_place") {
+  first_place2: statistic(key: "tgttos_first_place") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -1002,7 +1002,7 @@ const tgttosQuery = `query Leaderboard {
     }
   }
 
-  chickens1: statistic(key: "tgttos_chickens_punched") {
+  chickens_punched1: statistic(key: "tgttos_chickens_punched") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -1023,7 +1023,7 @@ const tgttosQuery = `query Leaderboard {
       value
     }
   }
-  chickens2: statistic(key: "tgttos_chickens_punched") {
+  chickens_punched2: statistic(key: "tgttos_chickens_punched") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -1045,7 +1045,7 @@ const tgttosQuery = `query Leaderboard {
     }
   }
 
-  rounds1: statistic(key: "tgttos_round_first_place") {
+  round_first_place1: statistic(key: "tgttos_round_first_place") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -1066,7 +1066,7 @@ const tgttosQuery = `query Leaderboard {
       value
     }
   }
-  rounds2: statistic(key: "tgttos_round_first_place") {
+  round_first_place2: statistic(key: "tgttos_round_first_place") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid
@@ -1134,7 +1134,7 @@ const dynaballQuery = `query Leaderboard {
     }
   }
 
-  kills1: statistic(key: "dynaball_players_eliminated") {
+  players_eliminated1: statistic(key: "dynaball_players_eliminated") {
     leaderboard(amount: 50, offset: 0) {
       player {
         uuid
@@ -1155,7 +1155,7 @@ const dynaballQuery = `query Leaderboard {
       value
     }
   }
-  kills2: statistic(key: "dynaball_players_eliminated") {
+  players_eliminated2: statistic(key: "dynaball_players_eliminated") {
     leaderboard(amount: 50, offset: 50) {
       player {
         uuid

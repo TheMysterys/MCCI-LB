@@ -1,7 +1,46 @@
 {
+    "dynaball": [
+        "wins",
+        "players_eliminated",
+        "blocks_destroyed",
+        "survive_2m"
+    ],
+    "hole_in_the_wall": [
+        "first_place",
+        "top_three",
+        "walls_dodged"
+    ],
+    "pw_solo": [
+        "medals_banked",
+        "total_medals_banked"
+    ],
+    "pw_survival": [
+        "players_eliminated",
+        "final_duel_wins",
+        "leap_4_completion",
+        "leap_7_completion"
+    ],
+    "battle_box_quads": [
+        "team_rounds_won",
+        "team_first_place",
+        "players_killed"
+    ],
+    "tgttos": [
+        "top_three",
+        "first_place",
+        "round_first_place",
+        "chickens_punched"
+    ],
     "sky_battle_quads": [
         "survival_first_place",
         "survival_top_three",
         "players_killed"
+    ],
+    "rocket_spleef": [
+        "kills",
+        "first_place",
+        "top_five",
+        "survive_60s",
+        "direct_hits"
     ]
 }

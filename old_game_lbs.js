@@ -1,14 +1,28 @@
+const { MongoClient } = require("mongodb");
 const { log, LogType, logException } = require("@themysterys/pretty-log");
-const leaderboards = require("./leaderboards.json");
+const {
+	tgttosQuery,
+	sbQuery,
+	bbQuery,
+	rocketQuery,
+	pkSoloQuery,
+	dynaballQuery,
+	hitwQuery,
+	pwSurvivorQuery,
+} = require("./query");
 
-const { createClient } = require("@clickhouse/client");
+const client = new MongoClient(process.env.MONGO_URI);
 
-const client = createClient({
-	url: process.env.CLICKHOUSE_URL,
-	password: process.env.CLICKHOUSE_PASSWORD,
-	username: process.env.CLICKHOUSE_USER,
-	database: "mcci",
-});
+const games = {
+	tgttos: ["topThree", "first", "chickens", "rounds"],
+	sky_battle: ["topThree", "first", "kills"],
+	battle_box: ["team", "first", "kills"],
+	rocket_spleef: ["kills", "first", "topFive", "survive", "hits"],
+	pw_survivor: ["outlive", "duel", "leapFour", "leapSeven"],
+	pw_solo: ["medals", "totalMedals"],
+	dynaball: ["wins", "kills", "blocks", "survive"],
+	hitw: ["first", "topThree", "walls"],
+};
 
 const APIErrors = {
 	API_OFFLINE: 1, // API is offline
@@ -19,89 +33,93 @@ const APIErrors = {
 let hasErrored = false;
 const leaderboardData = {
 	tgttos: {},
-	sky_battle_quads: {},
-	battle_box_quads: {},
+	sky_battle: {},
+	battle_box: {},
 	rocket_spleef: {},
-	pw_survival: {},
+	pw_survivor: {},
 	pw_solo: {},
 	dynaball: {},
-	hole_in_the_wall: {},
+	hitw: {},
 };
 
 async function main() {
-	log("Connected to Clickhouse", LogType.NETWORK);
+	await client.connect();
+	const db = client.db("leaderboards");
+	log("Connected to MongoDB", LogType.NETWORK);
 
-	for (const game in leaderboards) {
+	for (const game in games) {
 		if (hasErrored) {
 			break;
 		}
 		await new Promise((resolve) => setTimeout(resolve, 1000));
-		await updateLeaderboard(game);
+		await updateLeaderboard(db, game);
 	}
 
 	if (hasErrored) {
 		log("There was an error. Data will not be saved.");
 		client.close();
-		log("Closed connection to Clickhouse", LogType.NETWORK);
+		log("Closed connection to MongoDB", LogType.NETWORK);
 		return;
 	}
 
 	for (const game in leaderboardData) {
+		const collection = db.collection(`${game}_leaderboards`);
 		log(`Saving leaderboard data for game: ${game}`);
-		let databaseRows = [];
-		for (const statistic in leaderboardData[game]) {
-			databaseRows.push(
-				...leaderboardData[game][statistic].map((entry) => ({
-					statistic,
-					uuid: entry.player?.uuid ?? null,
-					username: entry.player?.username ?? null,
-					ranks: entry.player?.ranks ?? [],
-					rank: entry.rank,
-					value: entry.value,
-				}))
-			);
+
+		for (const key in leaderboardData[game]) {
+			// Insert leaderboard in database for graphs
+			await collection.insertOne({
+				date: new Date(),
+				key: key,
+				data: leaderboardData[game][key],
+			});
 		}
-		await client.insert({
-			table: `leaderboard_${game}`,
-			values: databaseRows,
-			format: "JSONEachRow",
-		});
 	}
 
 	client.close();
-	log("Closed connection to Clickhouse", LogType.NETWORK);
+	log("Closed connection to MongoDB", LogType.NETWORK);
 }
 
 async function getLBData(game) {
-	let query = "query Leaderboard {";
-
-	for (let statistic of leaderboards[game]) {
-		query += `${statistic}1: statistic(key: "${game}_${statistic}") {
-			leaderboard(amount: 50, offset: 0) {
-			player {
-				uuid
-				username
-				ranks
-			}
-			rank
-			value
-			}
+	let query = "";
+	switch (game) {
+		case "tgttos": {
+			query = tgttosQuery;
+			break;
 		}
-		${statistic}2: statistic(key: "${game}_${statistic}") {
-			leaderboard(amount: 50, offset: 50) {
-			player {
-				uuid
-				username
-				ranks
-			}
-			rank
-			value
-			}
+		case "sky_battle": {
+			query = sbQuery;
+			break;
 		}
-		`;
+		case "battle_box": {
+			query = bbQuery;
+			break;
+		}
+		case "rocket_spleef": {
+			query = rocketQuery;
+			break;
+		}
+		case "pw_solo": {
+			query = pkSoloQuery;
+			break;
+		}
+		case "pw_survivor": {
+			query = pwSurvivorQuery;
+			break;
+		}
+		case "dynaball": {
+			query = dynaballQuery;
+			break;
+		}
+		case "hitw": {
+			query = hitwQuery;
+			break;
+		}
+		default: {
+			log("How did we get here?", LogType.ERROR);
+			return { data: null, error: APIErrors.REQUEST_ERROR };
+		}
 	}
-	query += "}";
-
 	const request = await fetch("https://api.mccisland.net/graphql", {
 		method: "POST",
 		headers: {
@@ -145,7 +163,7 @@ async function getLBData(game) {
 	return { data: rawData.data, error: null };
 }
 
-async function updateLeaderboard(game) {
+async function updateLeaderboard(db, game) {
 	log(`Updating leaderboard for game: ${game}`);
 
 	log("Fetching leaderboard data from API");
@@ -167,7 +185,7 @@ async function updateLeaderboard(game) {
 							{
 								title: "MCCI API is offline",
 								description: [
-									"Game Leaderboards will resume tomorrow",
+									"Leaderboards will resume tomorrow",
 								].join("\n"),
 								color: 0xff0000,
 								footer: {
@@ -190,7 +208,10 @@ async function updateLeaderboard(game) {
 					body: JSON.stringify({
 						embeds: [
 							{
-								title: "Error Updating Game Leaderboards",
+								title: "Error Updating Leaderboard",
+								description: [
+									"Please contact TheMysterys",
+								].join("\n"),
 								color: 0xff0000,
 								footer: {
 									text: "Errored at",
@@ -207,7 +228,9 @@ async function updateLeaderboard(game) {
 		return;
 	}
 
-	for (const lb_key of leaderboards[game]) {
+	const now = new Date();
+
+	for (const lb_key of games[game]) {
 		const fullLeaderboard = [
 			...data[lb_key + "1"].leaderboard,
 			...data[lb_key + "2"].leaderboard,
