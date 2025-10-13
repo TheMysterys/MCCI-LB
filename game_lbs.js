@@ -40,7 +40,7 @@ async function main() {
 	}
 
 	if (hasErrored) {
-		log("There was an error. Data will not be saved.");
+		log("There was an error. Data will not be saved.", LogType.ERROR);
 		client.close();
 		log("Closed connection to Clickhouse", LogType.NETWORK);
 		return;
