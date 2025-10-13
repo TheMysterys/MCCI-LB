@@ -1,7 +1,7 @@
-name: Update Main Leaderboards
+name: Update Daily Leaderboards
 on:
     schedule:
-        - cron: "0 0 * * *"
+        - cron: "0 10 * * *"
     workflow_dispatch:
 
 jobs:
