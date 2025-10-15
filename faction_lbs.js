@@ -280,8 +280,8 @@ async function updateLeaderboard() {
 		FROM mcci.leaderboard_factions_players
 		GROUP BY uuid
 		ORDER BY value DESC 
-		LIMIT 20;
-	`,
+		LIMIT 25;
+		`,
 		format: "JSONEachRow",
 	});
 
@@ -301,7 +301,7 @@ async function updateLeaderboard() {
 
 	const currentTop20 = allFactionPlayers
 		.sort((a, b) => b.value - a.value)
-		.slice(0, 20);
+		.slice(0, 25);
 
 	const top20Result = currentTop20.map((currentEntry, idx) => {
 		const pastIndex = pastTop20.findIndex(
@@ -321,7 +321,7 @@ async function updateLeaderboard() {
 			direction,
 			rank: idx + 1,
 		};
-	});
+	}).slice(0, 20);
 
 	if (
 		top20Result.some((entry) => entry.change !== 0) ||
