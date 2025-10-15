@@ -57,7 +57,7 @@ async function main() {
 					username: entry.player?.username ?? null,
 					ranks: entry.player?.ranks ?? [],
 					rank: entry.rank,
-					value: entry.value,
+					Value: entry.value,
 				}))
 			);
 		}
