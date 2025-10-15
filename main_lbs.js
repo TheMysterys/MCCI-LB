@@ -1,9 +1,15 @@
-const { MongoClient } = require("mongodb");
 const { getFishing, getCrown } = require("./emojis");
 const { log, LogType, logException } = require("@themysterys/pretty-log");
 const { mainQuery } = require("./query");
 
-const client = new MongoClient(process.env.MONGO_URI);
+const { createClient, ClickHouseClient } = require("@clickhouse/client");
+
+const client = createClient({
+	url: process.env.CLICKHOUSE_URL,
+	password: process.env.CLICKHOUSE_PASSWORD,
+	username: process.env.CLICKHOUSE_USER,
+	database: "mcci",
+});
 
 const crowns = [
 	"<:CROWN:1122664056160010323>",
@@ -51,14 +57,13 @@ const APIErrors = {
 };
 
 async function main() {
-	await client.connect();
-	const db = client.db("leaderboards");
-	log("Connected to MongoDB", LogType.NETWORK);
+	await client.ping({ select: true });
+	log("Connected to Clickhouse", LogType.NETWORK);
 
-	await updateLeaderboard(db);
+	await updateLeaderboard();
 
-	client.close();
-	log("Closed connection to MongoDB", LogType.NETWORK);
+	await client.close();
+	log("Closed connection to Clickhouse", LogType.NETWORK);
 }
 
 async function getLBData() {
@@ -105,7 +110,7 @@ async function getLBData() {
 	return { data: rawData.data, error: null };
 }
 
-async function updateLeaderboard(db) {
+async function updateLeaderboard() {
 	log("Fetching Leaderboard data from API");
 	const { data, error } = await getLBData();
 
@@ -115,7 +120,6 @@ async function updateLeaderboard(db) {
 		const webhookUrls =
 			process.env[leaderboard_key.toUpperCase()].split(",");
 		const leaderboard = leaderboards[leaderboard_key];
-		const collection = db.collection(`${leaderboard_key}_leaderboards`);
 
 		// Post Errors
 		if (error) {
@@ -171,14 +175,26 @@ async function updateLeaderboard(db) {
 		}
 
 		// get past leaderboard
-		const pastLeaderboardData = await collection
-			.find()
-			.sort({ date: -1 })
-			.limit(1)
-			.toArray();
+		const pastTop20Rows = await client.query({
+			query: `
+			SELECT 
+				ts,
+				uuid,
+				rank,
+				username,
+				Value
+			FROM mcci.leaderboard_${leaderboard.statistic}
+			WHERE ts = (
+				SELECT max(ts)
+				FROM mcci.leaderboard_${leaderboard.statistic}
+			)
+			ORDER BY rank ASC
+			LIMIT 25;
+			`,
+			format: "JSONEachRow",
+		});
 
-		const pastDiscordLeaderboard =
-			pastLeaderboardData[0]?.data.slice(0, 25) ?? [];
+		const pastTop20 = (await pastTop20Rows.json()) ?? [];
 
 		const fullLeaderboard = [
 			...data[leaderboard_key + "1"].leaderboard,
@@ -188,10 +204,7 @@ async function updateLeaderboard(db) {
 		const discordLeaderboard = fullLeaderboard.slice(0, 25);
 
 		// Get movement of each player
-		const result = getMovement(
-			pastDiscordLeaderboard,
-			discordLeaderboard
-		).slice(0, 20);
+		const result = getMovement(pastTop20, discordLeaderboard).slice(0, 20);
 
 		const embed = {
 			title: leaderboard.title,
@@ -285,9 +298,16 @@ async function updateLeaderboard(db) {
 		}
 
 		// Insert leaderboard in database for graphs
-		await collection.insertOne({
-			date: new Date(),
-			data: fullLeaderboard,
+		await client.insert({
+			table: `leaderboard_${leaderboard.statistic}`,
+			values: fullLeaderboard.map((entry) => ({
+				uuid: entry.player.uuid,
+				username: entry.player.username,
+				ranks: entry.player.ranks,
+				rank: entry.rank,
+				Value: entry.value,
+			})),
+			format: "JSONEachRow",
 		});
 	}
 }
@@ -296,13 +316,12 @@ function getMovement(pastLeaderboard, currentLeaderboard) {
 	let result = [];
 
 	currentLeaderboard.forEach((currentEntry) => {
-		const currentPlayer = currentEntry.player;
 		let pastEntry = pastLeaderboard.find(
-			(entry) => entry.player.uuid === currentEntry.player.uuid
+			(entry) => entry.uuid === currentEntry.player.uuid
 		);
 
 		if (pastEntry) {
-			let change = currentEntry.value - pastEntry.value;
+			let change = currentEntry.value - pastEntry.Value;
 			let direction = "";
 
 			if (currentEntry.rank < pastEntry.rank) {
@@ -316,7 +335,7 @@ function getMovement(pastLeaderboard, currentLeaderboard) {
 			result.push({
 				...currentEntry,
 				change: 0,
-				direction: ":arrow_up:",
+				direction: "",
 			});
 		}
 	});
