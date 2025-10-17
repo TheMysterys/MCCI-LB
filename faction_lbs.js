@@ -118,8 +118,6 @@ async function updateLeaderboard() {
 	log("Fetching Faction Leaderboard data from API");
 	const { data, error } = await getLBData();
 
-	log(`Updating Faction Leaderboard`);
-
 	const webhookUrls = process.env.FACTIONS.split(",");
 
 	// Post Errors
@@ -207,8 +205,9 @@ async function updateLeaderboard() {
 		currentFactionsLeaderboard
 	);
 
+	log(`Updating Faction Leaderboard`);
 	if (
-		factionsResult.some((entry) => entry.change !== 0) ||
+		factionsResult.some((entry) => entry.change !== 0 || entry.direction !== "") ||
 		pastFactionsLeaderboard.length == 0
 	) {
 		function factionName(str) {
@@ -323,6 +322,7 @@ async function updateLeaderboard() {
 		};
 	}).slice(0, 20);
 
+	log(`Updating Faction Top 20 Leaderboard`);
 	if (
 		top20Result.some((entry) => entry.change !== 0) ||
 		pastTop20.length == 0
@@ -368,7 +368,7 @@ async function updateLeaderboard() {
 			});
 		}
 	} else {
-		log("Factions top 20 leaderboard did not change", LogType.INFORMATION);
+		log("Factions Top 20 Leaderboard did not change", LogType.INFORMATION);
 	}
 
 	// Insert factions leaderboard in database for graphs
