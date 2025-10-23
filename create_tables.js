@@ -110,13 +110,14 @@ async function createExchangeTable() {
 	let table_name = `island_exchange`;
 	let ddl = `
 	CREATE TABLE IF NOT EXISTS ${table_name} (
-        identifier	UUID,
-		name		String,
-		rarity		String,
-		type		String,
-		amount		Int32,
-		cost		Int64,
-		endTime		DateTime('UTC')
+        identifier		UUID,
+		name			String,
+		rarity			String,
+		type			String,
+		amount			Int32,
+		cost			Int64,
+		endTime			DateTime('UTC'),
+		creationTime	DateTime('UTC')
     )
     ENGINE = ReplacingMergeTree
     PARTITION BY toYYYYMMDD(endTime)

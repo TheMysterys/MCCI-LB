@@ -5,7 +5,8 @@
   "scripts": {
     "main": "node main_lbs.js",
     "games": "node game_lbs.js",
-    "factions": "node faction_lbs.js"
+    "factions": "node faction_lbs.js",
+    "exchange": "node exchange.js"
   },
   "author": "",
   "license": "ISC",

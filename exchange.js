@@ -9,8 +9,8 @@ const client = createClient({
 	username: process.env.CLICKHOUSE_USER,
 	database: "mcci",
 	clickhouse_settings: {
-		date_time_input_format: "best_effort"
-	}
+		date_time_input_format: "best_effort",
+	},
 });
 
 const APIErrors = {
@@ -132,11 +132,11 @@ async function updateLeaderboard() {
 		return;
 	}
 
-	const soldListings = data.soldIslandExchangeListings.slice(0, 5);
+	const soldListings = data.soldIslandExchangeListings;
 
 	client.insert({
 		table: "island_exchange",
-		values: soldListings.map(listing => ({
+		values: soldListings.map((listing) => ({
 			identifier: listing.identifier,
 			name: listing.asset.name,
 			rarity: listing.asset.rarity,
@@ -144,12 +144,15 @@ async function updateLeaderboard() {
 			amount: listing.amount,
 			cost: listing.cost,
 			endTime: listing.endTime,
+			creationTime: listing.creationTime,
 		})),
-		format: "JSONEachRow"
-	})
+		format: "JSONEachRow",
+	});
 
-	log(`Inserted ${soldListings.length} listings to Clickhouse.`, LogType.SUCCESS)
-
+	log(
+		`Inserted ${soldListings.length} listings to Clickhouse.`,
+		LogType.SUCCESS
+	);
 }
 
 main();

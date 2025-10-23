@@ -376,6 +376,7 @@ const exchangeQuery = `query IslandExchange {
     amount
     cost
     endTime
+    creationTime
     identifier
   }
 }`
