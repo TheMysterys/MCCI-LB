@@ -106,17 +106,41 @@ async function createFactionPlayersTable() {
 	log(`Ensured table exists: ${table_name}`, LogType.SUCCESS);
 }
 
+async function createExchangeTable() {
+	let table_name = `island_exchange`;
+	let ddl = `
+	CREATE TABLE IF NOT EXISTS ${table_name} (
+        identifier	UUID,
+		name		String,
+		rarity		String,
+		type		String,
+		amount		Int32,
+		cost		Int64,
+		endTime		DateTime('UTC')
+    )
+    ENGINE = ReplacingMergeTree
+    PARTITION BY toYYYYMMDD(endTime)
+    ORDER BY (identifier, endTime, name)
+	`;
+
+	await client.exec({
+		query: ddl,
+	});
+	log(`Ensured table exists: ${table_name}`, LogType.SUCCESS);
+}
+
 async function main() {
 	log("Connected to Clickhouse", LogType.NETWORK);
 
-	for (const game in leaderboards) {
+	/* for (const game in leaderboards) {
 		await createGameTable(game);
 	}
 	for (const stat of mainTables) {
 		await createMainTable(stat);
 	}
 	await createFactionTable();
-	await createFactionPlayersTable();
+	await createFactionPlayersTable(); */
+	await createExchangeTable();
 	await client.close();
 }
 

@@ -366,7 +366,22 @@ const factionQuery = `query Factions {
   }
 }`
 
+const exchangeQuery = `query IslandExchange {
+  soldIslandExchangeListings {
+    asset{
+      name
+      rarity
+      __typename
+    }
+    amount
+    cost
+    endTime
+    identifier
+  }
+}`
+
 module.exports = {
 	mainQuery,
-  factionQuery
+  factionQuery,
+  exchangeQuery
 };
