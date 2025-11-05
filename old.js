@@ -92,7 +92,7 @@ async function updateLeaderboard(db, leaderboard_key) {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			"User-Agent": "Trophy Hunters Leaderboards",
+			"User-Agent": "MCC Island Leaderboards (@TheMysterys)",
 			"X-API-Key": process.env.API_KEY,
 		},
 		body: JSON.stringify({
