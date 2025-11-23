@@ -271,14 +271,12 @@ async function updateLeaderboard() {
 		query: `
 		SELECT
 			uuid,
-			argMax(value, ts) AS value,
-			argMax(username, ts) AS username,
-			argMax(faction, ts) AS faction,
-			max(ts) AS last_updated
+			value,
+			username,
+			faction,
+			ts AS last_updated
 		FROM mcci.leaderboard_factions_players
-		WHERE toDate(ts) > toDate(now()) - INTERVAL 1 DAY
-		GROUP BY uuid
-		ORDER BY value DESC 
+		ORDER BY ts DESC, value DESC
 		LIMIT 25;
 		`,
 		format: "JSONEachRow",
