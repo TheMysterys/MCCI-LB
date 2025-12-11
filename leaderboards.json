@@ -42,5 +42,11 @@
         "top_five",
         "survive_60s",
         "direct_hits"
+    ],
+    "battle_box_arena": [
+        "team_rounds_won",
+        "team_first_place",
+        "players_killed",
+        "player_kills_assisted"
     ]
 }
