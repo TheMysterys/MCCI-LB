@@ -392,6 +392,7 @@ const exchangeQuery = `query IslandExchange {
       name
       rarity
       __typename
+      uniqueIdentifier
     }
     amount
     cost
