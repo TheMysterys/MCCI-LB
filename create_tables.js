@@ -133,14 +133,14 @@ async function createExchangeTable() {
 async function main() {
 	log("Connected to Clickhouse", LogType.NETWORK);
 
-	/* for (const game in leaderboards) {
+	for (const game in leaderboards) {
 		await createGameTable(game);
 	}
 	for (const stat of mainTables) {
 		await createMainTable(stat);
 	}
 	await createFactionTable();
-	await createFactionPlayersTable(); */
+	await createFactionPlayersTable();
 	await createExchangeTable();
 	await client.close();
 }
