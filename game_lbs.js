@@ -26,6 +26,7 @@ const leaderboardData = {
 	pw_solo: {},
 	dynaball: {},
 	hole_in_the_wall: {},
+	battle_box_arena: {},
 };
 
 async function main() {
@@ -209,8 +210,8 @@ async function updateLeaderboard(game) {
 
 	for (const lb_key of leaderboards[game]) {
 		const fullLeaderboard = [
-			...data[lb_key + "1"].leaderboard,
-			...data[lb_key + "2"].leaderboard,
+			...data[lb_key + "1"]?.leaderboard ?? [],
+			...data[lb_key + "2"]?.leaderboard ?? [],
 		];
 
 		leaderboardData[game][lb_key] = fullLeaderboard;

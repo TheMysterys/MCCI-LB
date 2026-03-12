@@ -22,7 +22,7 @@ const APIErrors = {
 async function main() {
 	log("Connected to Clickhouse", LogType.NETWORK);
 
-	await updateLeaderboard();
+	await updateListings();
 
 	client.close();
 	log("Closed connection to Clickhouse", LogType.NETWORK);
@@ -72,7 +72,7 @@ async function getLBData() {
 	return { data: rawData.data, error: null };
 }
 
-async function updateLeaderboard() {
+async function updateListings() {
 	log("Fetching Island Exchange listings from API");
 	const { data, error } = await getLBData();
 
@@ -145,6 +145,7 @@ async function updateLeaderboard() {
 			cost: listing.cost,
 			endTime: listing.endTime,
 			creationTime: listing.creationTime,
+			assetIdentifier: listing.asset.uniqueIdentifier,
 		})),
 		format: "JSONEachRow",
 	});

@@ -11,7 +11,7 @@ const client = createClient({
 });
 
 const crowns = [
-	"<:CROWN:1122664056160010323>",
+	"<:mccicrown:1473755174290980864>",
 	"<:1_:1394998866461593710>",
 	"<:5_:1394998874816385064>",
 ];
@@ -271,14 +271,12 @@ async function updateLeaderboard() {
 		query: `
 		SELECT
 			uuid,
-			argMax(value, ts) AS value,
-			argMax(rank, ts) AS rank,
-			argMax(username, ts) AS username,
-			argMax(faction, ts) AS faction,
-			max(ts) AS last_updated
+			value,
+			username,
+			faction,
+			ts AS last_updated
 		FROM mcci.leaderboard_factions_players
-		GROUP BY uuid
-		ORDER BY value DESC 
+		ORDER BY ts DESC, value DESC
 		LIMIT 25;
 		`,
 		format: "JSONEachRow",
