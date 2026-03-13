@@ -17,18 +17,9 @@ const APIErrors = {
 };
 
 let hasErrored = false;
-const leaderboardData = {
-	tgttos: {},
-	sky_battle_quads: {},
-	battle_box_quads: {},
-	rocket_spleef: {},
-	pw_survival: {},
-	pw_solo: {},
-	dynaball: {},
-	hole_in_the_wall: {},
-	battle_box_arena: {},
-	event_spirit_blossom: {},
-};
+const leaderboardData = Object.fromEntries(
+	Object.keys(leaderboards).map((game) => [game, {}]),
+);
 
 async function main() {
 	log("Connected to Clickhouse", LogType.NETWORK);
@@ -215,6 +206,7 @@ async function updateLeaderboard(game) {
 			...(data[lb_key + "2"]?.leaderboard ?? []),
 		];
 
+		if (!leaderboardData[game]) leaderboardData[game] = {};
 		leaderboardData[game][lb_key] = fullLeaderboard;
 	}
 
