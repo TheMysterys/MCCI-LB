@@ -27,6 +27,7 @@ const leaderboardData = {
 	dynaball: {},
 	hole_in_the_wall: {},
 	battle_box_arena: {},
+	event_spirit_blossom: {},
 };
 
 async function main() {
@@ -59,7 +60,7 @@ async function main() {
 					ranks: entry.player?.ranks ?? [],
 					rank: entry.rank,
 					Value: entry.value,
-				}))
+				})),
 			);
 		}
 		await client.insert({
@@ -210,8 +211,8 @@ async function updateLeaderboard(game) {
 
 	for (const lb_key of leaderboards[game]) {
 		const fullLeaderboard = [
-			...data[lb_key + "1"]?.leaderboard ?? [],
-			...data[lb_key + "2"]?.leaderboard ?? [],
+			...(data[lb_key + "1"]?.leaderboard ?? []),
+			...(data[lb_key + "2"]?.leaderboard ?? []),
 		];
 
 		leaderboardData[game][lb_key] = fullLeaderboard;

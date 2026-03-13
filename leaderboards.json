@@ -49,10 +49,10 @@
         "players_killed",
         "player_kills_assisted"
     ],
-    "event_spirit": [
-        "blossom_race_1",
-        "blossom_race_2",
-        "blossom_race_3",
-        "blossom_race_4"
+    "event_spirit_blossom": [
+        "race_1",
+        "race_2",
+        "race_3",
+        "race_4"
     ]
 }
