@@ -48,11 +48,5 @@
         "team_first_place",
         "players_killed",
         "player_kills_assisted"
-    ],
-    "event_spirit_blossom": [
-        "race_1",
-        "race_2",
-        "race_3",
-        "race_4"
     ]
 }
